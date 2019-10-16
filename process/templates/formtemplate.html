@@ -17,10 +17,10 @@
     <div>
           <div class = "tabs">
             <ul>
-              <li><a href = "{% url 'addprocess' %}"><div class = "{% if request.resolver_match.url_name == 'addprocess' %}active {% endif %}tabc">Процесс</div></a></li>
-              <li><a {% if not request.resolver_match.url_name == 'addprocess' %}href = "{% url 'addmember' %}"{% else %} title = "Создайте процесс"{% endif %} ><div class = "{% if request.resolver_match.url_name == 'addmember' %}active {% endif %}tabc">Участники</div></a></li>
-              <li><a {% if not request.resolver_match.url_name == 'addprocess' %}href = "{% url 'addexpence' %}" {% else %} title = "Создайте процесс"{% endif %} ><div class = "{% if request.resolver_match.url_name == 'addexpence' %}active {% endif %}tabc">Затраты</div></a></li>
-              <li><a {% if not request.resolver_match.url_name == 'addprocess' %}href = "{% url 'addindicator' %}" {% else %} title = "Создайте процесс"{% endif %}><div class = "{% if request.resolver_match.url_name == 'addindicator' %}active {% endif %}tabc">Показатели</div></a></li>
+              <li><a href = "{% url 'addprocess' %}"><div class = "{% if request.resolver_match.url_name == 'addprocess' or request.resolver_match.url_name == "edit" %}active {% endif %}tabc">Процесс</div></a></li>
+              <li><a {% if not request.resolver_match.url_name == 'addprocess' %} href = "{% url 'addmember' %}"{% else %} title = "Создайте процесс"{% endif %} ><div class = "{% if request.resolver_match.url_name == 'addmember' or request.resolver_match.url_name == ""  %}active {% endif %}tabc">Участники</div></a></li>
+              <li><a {% if not request.resolver_match.url_name == 'addprocess' %}href = "{% url 'addexpence' %}" {% else %} title = "Создайте процесс"{% endif %} ><div class = "{% if request.resolver_match.url_name == 'addexpence' or request.resolver_match.url_name == "editexpense" %}active {% endif %}tabc">Затраты</div></a></li>
+              <li><a {% if not request.resolver_match.url_name == 'addprocess' %}href = "{% url 'addindicator' %}" {% else %} title = "Создайте процесс"{% endif %}><div class = "{% if request.resolver_match.url_name == 'addindicator' or request.resolver_match.url_name == "edit_indicator" %}active {% endif %}tabc">Показатели</div></a></li>
             </ul>
           </div>
           {% csrf_token %}

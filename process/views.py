@@ -321,7 +321,81 @@ def calculate_all_for_process(request):
 
 
 #endregion
+#region Мероприятия
 
+def choise_process(request):
+    process = Process.objects.all()
+    return render(request, "create/event/choise_process.html",{'process':process})
+
+def coppy(id, parent = None):
+    process = Process.objects.get(pk = id)
+    if parent:
+        pproc = Process.objects.get(pk = parent)
+    else:
+        pproc = None
+    bproc = Process.objects.get(pk = id)
+    new_process = process
+    new_process.id = None
+    new_process.lft = None
+    new_process.rght = None
+    new_process.tree_id = None
+    new_process.level = None
+    new_process.parent = pproc
+    new_process.base = bproc
+    new_process.name += "*"
+    new_process.save()
+    expenses = Expense.objects.filter(name_process = process.id)
+    for exp in expenses:
+        risk = Risk.objects.filter(expense = exp.id)
+        exp.pk = None
+        exp.name_process = new_process
+        exp.save()
+        for rsk in risk:
+            rsk.pk = None
+            rsk.expense = exp
+            rsk.save()
+    indicator = Indicator.objects.filter(name_process = process.id)
+    for ind in indicator:
+        ind.pk = None
+        ind.name_process = new_process
+        ind.save()
+    proc = Process.objects.get(id = id).get_children()
+    for pr in proc:
+        coppy(pr.id, new_process.id)
+
+def choise_expense(request):
+    coppy(request.GET.get('process'))
+    print(request.GET.get('process'))
+    process = Process.objects.filter(base = request.GET.get('process')).latest("id").get_descendants(include_self=True)
+    expense = Expense.objects.filter(name_process__in = [proc.id for proc in process])
+    return render(request,'create/event/choise_expense.html', context={'expense':expense})
+
+#Создание Мероприятия
+def add_event(request):
+    if request.method == "POST":
+        form = AddEvent(request.POST)
+        if form.is_valid():
+            event = form.save()
+            event.save()  
+            return HttpResponseRedirect("editscen/"+str(event.name_risk.id)+"/")
+                 
+    else:
+        form = AddEvent()
+    return render(request, "create/event/addevent.html",{'form':form})
+
+#Редактирование сценария при создании мерроприятия
+def edit_scen_event(request, id):
+    scen = get_object_or_404(Scenario, id = id)
+    if request.method == "POST":
+        form = AddScenario(request.POST, instance=scen)
+        if form.is_valid():
+            scenar = form.save(commit=False)
+            scenar.save()  
+            return HttpResponseRedirect("/process/addevent/editscen/"+str(scen.risk.id)+"/")
+    else:
+        form = AddScenario(instance=scen)
+    return render(request, "edit/edit_scenario.html",{'form':form})
+#endregion
 #region добавление
 #Форма добавления процесса
 def add_process(request):
@@ -412,18 +486,6 @@ def create_scenario(request):
         scenario.save()
     return HttpResponseRedirect("risk/scen/"+str(request.POST.get("id"))+"/")
 
-#Создание Мероприятия
-def add_event(request):
-    if request.method == "POST":
-        form = AddEvent(request.POST)
-        if form.is_valid():
-            event = form.save()
-            event.save()  
-            return HttpResponseRedirect("editscen/"+str(event.name_risk.id)+"/")
-                 
-    else:
-        form = AddEvent()
-    return render(request, "create/addevent.html",{'form':form})
 
 #Добавить ед. измерения
 def add_unit(request):
@@ -541,57 +603,47 @@ def edit_scen(request):
         form = AddScenario(instance=scen)
     return render(request, "edit/edit_scenario.html",{'form':form})
 
-#Редактирование сценария при создании мерроприятия
-def edit_scen_event(request, id):
-    scen = get_object_or_404(Scenario, id = id)
-    if request.method == "POST":
-        form = AddScenario(request.POST, instance=scen)
-        if form.is_valid():
-            scenar = form.save(commit=False)
-            scenar.save()  
-            return HttpResponseRedirect("/process/addevent/editscen/"+str(scen.risk.id)+"/")
-    else:
-        form = AddScenario(instance=scen)
-    return render(request, "edit/edit_scenario.html",{'form':form})
 
 #endregion
-
 #region функции
 #Создание копии процесса
 def create_coppy(request):
-        if request.method == "POST":
-            number = int(Process.objects.latest("number").number)
-            number +=1 
-            procid = int(request.POST.get("ProcID"))
-            old_process = Process.objects.get(id = procid)
-            new_process = old_process
-            new_process.id = None
-            new_process.name_process += " coppy"
-            new_process.number = str(number)
-            new_process.save()
-            expenses =  Expense.objects.filter(name_process__id = procid)
-            for exp in expenses:
-                unit = exp.unit
-                exp.pk = None
-                exp.name_process = new_process
-                exp.unit = unit
-                exp.save()
-
-            members =  MemberProcess.objects.filter(proces__id = procid)
-            for memb in members:
-                memb.pk = None
-                memb.proces = new_process
-                memb.save()
-
-            indicators =  Indicator.objects.filter(name_process__id = procid)
-            for ind in indicators:
-                unit = ind.unit
-                ind.pk = None
-                ind.name_process = new_process
-                ind.unit = unit
-                ind.save()
-        return HttpResponseRedirect("/process/info/")
-
+    process = Process.objects.all()
+    context = {}
+    if request.method == "GET":            
+        process = Process.objects.get(id = int(request.GET.get("checkedfield")))
+        bproc = Process.objects.get(pk = int(request.GET.get("checkedfield")))
+        new_process = process
+        new_process.id = None
+        new_process.lft = None
+        new_process.rght = None
+        new_process.tree_id = None
+        new_process.level = None
+        new_process.name += "-coppy"
+        new_process.base = bproc
+        new_process.save()
+        expenses = Expense.objects.filter(name_process = process.id)
+        indicator = Indicator.objects.filter(name_process = process.id)
+        proc = Process.objects.get(id = int(request.GET.get("checkedfield"))).get_children()
+        for exp in expenses:
+            risk = Risk.objects.filter(expense = exp.id)
+            exp.pk = None
+            exp.name_process = new_process
+            exp.save()
+            for rsk in risk:
+                rsk.pk = None
+                rsk.expense = exp
+                rsk.save()
+        for ind in indicator:
+            ind.pk = None
+            ind.name_process = new_process
+            ind.save()
+        for pr in proc:
+            coppy(pr.id, new_process.id)
+        PrID = request.session['PrId']
+        processes = Process.objects.get(id = PrID).get_descendants(include_self=True)
+        context['process'] = processes
+    return render(request, 'process/infotable.html', context)
 #Удаление процееса
 def delete(request):
         process = Process.objects.all()
@@ -599,12 +651,8 @@ def delete(request):
         if request.method == "GET":            
             process = Process.objects.get(id = int(request.GET.get("checkedfield")))
             process.delete()
-            Type = request.session['Type']
             PrID = request.session['PrId']
-            if Type == 'g':
-                processes = Process.objects.filter(group = PrID)
-            elif Type == 'p':
-                processes = Process.objects.filter(parent = PrID)
+            processes = Process.objects.get(id = PrID).get_descendants(include_self=True)
             context['process'] = processes
         return render(request, 'process/infotable.html', context)
 #endregion

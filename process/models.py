@@ -43,8 +43,7 @@ class Group_process(models.Model):
         verbose_name_plural ="Группы"
 
 class Process(MPTTModel):
-    
-    group = models.ForeignKey(Group_process, on_delete = models.CASCADE, null = True, blank = True, verbose_name="Группа")
+    base = models.ForeignKey('self', on_delete=models.SET_NULL, blank = True, null = True)
     parent = TreeForeignKey('self', on_delete = models.CASCADE, null = True, blank = True, verbose_name="Подпроцесс",related_name='children')
     name = models.CharField(max_length=200,verbose_name="Название процесса")
     start_event = models.CharField(max_length=200, null=True, blank = True,verbose_name="стартовое событие")

@@ -5,11 +5,6 @@
     <form method = "POST" >
     {% csrf_token %}
         <div class="field">
-            <div class = "fieldlabel"><label for="{{ form.group.id_for_label }}">Группа:</label></div>
-            <div class = "fieldbox">{{ form.group }}</div>
-            <input type="button" value = "+" class = "addbutton" onclick = "window.open('{% url 'addgroup' %}','print_popup','width=600,height=900')">
-        </div>
-        <div class="field">
             <div class = "fieldlabel"><label for="{{ form.parent.id_for_label }}">Подпроцесс:</label></div>
             <div class = "fieldbox">{{ form.parent }}</div>
         </div>
@@ -62,19 +57,5 @@
         
     <button type="submit" >Добавить</button>
     </form>
-    <script>
-        $('#{{ form.group.id_for_label }}').change(function(){
-            if (this.value)
-                $('#{{ form.parent.id_for_label }}').val('').parent().parent().hide()
-            else
-                $('#{{ form.parent.id_for_label }}').val('').parent().parent().show()
-        })
-        $('#{{ form.parent.id_for_label }}').change(function(){
-            if (this.value)
-                $('#{{ form.group.id_for_label }}').val('').parent().parent().hide()
-            else
-                $('#{{ form.group.id_for_label }}').val('').parent().parent().show()
-        })
-    </script>
 {% endblock  %}
 {% comment %} onclick="opener.location.href += '';window.close()" {% endcomment %}

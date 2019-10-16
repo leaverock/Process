@@ -42,5 +42,7 @@ urlpatterns = [
     path('addgroup',  views.add_group, name = 'addgroup'),
     path('addunit',  views.add_unit, name = 'addunit'),
     path('addposition',  views.add_position, name = 'addposition'),
-    path('sumallexpense',views.calculate_all_for_process, name="sum_all_expense")
+    path('sumallexpense',views.calculate_all_for_process, name="sum_all_expense"),
+    path('choise_process',views.choise_process, name = "choise_process"),
+    path('choise_expense',views.choise_expense, name = "choise_expense"),
 ]

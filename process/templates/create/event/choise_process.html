@@ -1,0 +1,40 @@
+{% extends "create/event/base.html" %}
+
+{% block  Contet%}
+        <table>
+        <thead class = "first-row">
+            <td>№</td>
+            <td>Название процесса</td>
+            <td>Стартовое событие</td>
+            <td>Владелец</td>
+            <td>Описание</td>
+        </thead>
+        {% for info in process %}
+        
+        <tr class = "rowtable">
+            <td><input name = "ProcID" class = "choose" type = "radio"  value = "{{info.id}}">{{info.id}}</td>
+            <td>{{info.name}}</td>
+            <td>{{info.start_event}}</td>
+            <td>{{info.owner}}</td>
+            <td>{{info.description}}</td>
+        </tr>
+        
+        {% endfor %}
+    </table>
+    <script>
+
+  $(".rowtable").click(function(){
+    $(this).find(":radio").prop("checked",true);
+    ProcID = $(this).find(":radio").val();
+    $(".rowtable").each(function(i,elem) {
+    if($(this).find(":radio").is(':checked')){
+      $(this).css({'background-color':'rgb(224, 222, 210)'});
+    }
+    else{
+      $(this).css({'background-color':''});
+    }
+  });
+    window.location.replace("{% url 'choise_expense' %}?process=" + ProcID);
+  });
+</script>
+{% endblock  %}

@@ -37,8 +37,8 @@
                         <label for="tabs-1-0">Действия</label>
                         <div>
                             <ul>
-                                <li><input class = "buton" type = "button" style="background-image: url({% static 'image/plus.svg' %})"formaction = "{% url 'coppy' %}" formmethod = "POST">Создать копию процесса</input></li>
-                                <li><input class = "buton" type = "button" style="background-image: url({% static 'image/red.svg' %})" onclick = "$.ajax('{% url 'delete' %}?checkedfield=' + ProcID, {success:data=>$('.content').html(data)})" formmethod = "POST">Удалить</input></li>
+                                <li><input class = "buton" type = "button" style="background-image: url({% static 'image/plus.svg' %})" onclick = "$.ajax('{% url 'coppy' %}?checkedfield=' + ProcID, {success:data=>$('.content').html(data)})" >Создать копию процесса</input></li>
+                                <li><input class = "buton" type = "button" style="background-image: url({% static 'image/red.svg' %})" onclick = "$.ajax('{% url 'delete' %}?checkedfield=' + ProcID, {success:data=>$('.content').html(data)})" >Удалить</input></li>
                                 <li><input class = "buton" type = "button" style="background-image: url({% static 'image/blue.svg' %})" formaction = "" formmethod = "POST">Согласовать изменения</input></li>
                                 <li><input class = "buton" type = "button" style="background-image: url({% static 'image/redg.svg' %})" formaction = "" formmethod = "POST">Утвердить изменения</input></li>
                                 <li><input class = "buton" type = "button" style="background-image: url({% static 'image/bluep.svg' %})" formaction = "" formmethod = "POST">Делигировать права</input></li>
@@ -52,7 +52,7 @@
                             <ul>
                                 <!--Создать-->
                                 <li><input class = "buton" type = "button" style="background-image: url({% static 'image/plus.svg' %})" 
-                                {% if request.resolver_match.url_name == 'event'%}  onclick = "window.open('{% url 'addevent' %}')"
+                                {% if request.resolver_match.url_name == 'event'%}  onclick = "window.open('{% url 'choise_process' %}')"
                                 {% else %} onclick = "window.open('{% url 'addprocess' %}')"
                                 {% endif %} formmethod = "POST">Создать</input></li>
                                 <!--Редактировать-->
