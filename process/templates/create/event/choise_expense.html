@@ -25,7 +25,7 @@
 
   $(".rowtable").click(function(){
     $(this).find(":radio").prop("checked",true);
-    ProcID = $(this).find(":radio").val();
+    IndID = $(this).find(":radio").val();
     $(".rowtable").each(function(i,elem) {
     if($(this).find(":radio").is(':checked')){
       $(this).css({'background-color':'rgb(224, 222, 210)'});
@@ -34,7 +34,7 @@
       $(this).css({'background-color':''});
     }
   });
-    window.location.replace("{% url 'choise_expense' %}?process=" + ProcID);
+    window.location.replace("{% url 'risk_event' %}?expense=" + IndID);
   });
 </script>
 {% endblock  %}

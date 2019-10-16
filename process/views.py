@@ -132,11 +132,16 @@ class GraphicView(View):
     def get(self, request):
         PrID = request.session['PrId']
         expense = Expense.objects.get(name_process = PrID)
+        expense1 = Expense.objects.get(name_process__base = PrID)
         mu =float(expense.expected_value_time)
         sigma = float(expense.standard_deviation_time)
+        mu1 =float(expense1.expected_value_time)
+        sigma1 = float(expense1.standard_deviation_time)
         x_axis = np.arange(mu - 5*sigma, mu + 5*sigma, 0.001)
         plt.plot(x_axis, norm.pdf(x_axis,mu,sigma), color = 'k')
+        plt.plot(x_axis, norm.pdf(x_axis,mu1,sigma1), color = 'g')
         plt.axvline(x=mu,linewidth=2, color='k', linestyle = ":")
+        plt.axvline(x=mu1,linewidth=2, color='g', linestyle = ":")
         plt.axvline(x=expense.critical_time,linewidth=2, color='r')
         plt.ylabel('Вероятность')
         plt.xlabel('Показатель')
@@ -288,32 +293,34 @@ def calculate_all_for_process(request):
         gamma_cost = calculations.gamma(critical_value_cost,expected_value_with_risk_cost,sumrisk[3])
         probability_time = calculations.probability(gamma_time)*100
         probability_cost = calculations.probability(gamma_cost)*100
-        if expense == None:
-            exp = Expense()
-            exp.name_process = process
-            exp.name_expense = "Итог"
-            exp.lead_time = summ[0]
-            exp.execution_costs = summ[1]
-            exp.expected_value_time = expected_value_with_risk_time
-            exp.expected_value_cost = expected_value_with_risk_cost
-            exp.standard_deviation_time = sumrisk[2]
-            exp.standard_deviation_cost = sumrisk[3]
-            exp.critical_time = critical_value_time
-            exp.critical_cost = critical_value_cost
-            exp.sigma_time = gamma_time
-            exp.sigma_cost = gamma_cost
-            exp.probability_time = probability_time
-            exp.probability_cost = probability_cost
-            exp.save()
-            risk = Risk()
-            risk.name_risk = "Итог"
-            risk.description = "итог по процессу"
-            risk.expense = exp
-            risk.expected_value_time = sumrisk[0]
-            risk.expected_value_cost = sumrisk[1]
-            risk.standard_deviation_time = sumrisk[2]
-            risk.standard_deviation_cost = sumrisk[3]
-            risk.save()
+        if expense != None:
+            expense.delete()
+        exp = Expense()
+        exp.name_process = process
+        exp.name_expense = "Итог"
+        exp.lead_time = summ[0]
+        exp.execution_costs = summ[1]
+        exp.expected_value_time = expected_value_with_risk_time
+        exp.expected_value_cost = expected_value_with_risk_cost
+        exp.standard_deviation_time = sumrisk[2]
+        exp.standard_deviation_cost = sumrisk[3]
+        exp.critical_time = critical_value_time
+        exp.critical_cost = critical_value_cost
+        exp.sigma_time = gamma_time
+        exp.sigma_cost = gamma_cost
+        exp.probability_time = probability_time
+        exp.probability_cost = probability_cost
+        exp.save()
+        risk = Risk()
+        risk.name_risk = "Итог"
+        risk.description = "итог по процессу"
+        risk.expense = exp
+        risk.expected_value_time = sumrisk[0]
+        risk.expected_value_cost = sumrisk[1]
+        risk.standard_deviation_time = sumrisk[2]
+        risk.standard_deviation_cost = sumrisk[3]
+        risk.save()
+        
         return redirect('expenses')
     else:
         return render(request,'create/add_critical.html',{})
@@ -344,17 +351,22 @@ def coppy(id, parent = None):
     new_process.base = bproc
     new_process.name += "*"
     new_process.save()
-    expenses = Expense.objects.filter(name_process = process.id)
+    expenses = Expense.objects.filter(name_process = bproc)
     for exp in expenses:
-        risk = Risk.objects.filter(expense = exp.id)
+        risk = Risk.objects.filter(expense = exp)
         exp.pk = None
         exp.name_process = new_process
         exp.save()
         for rsk in risk:
+            scenario = Scenario.objects.filter(risk = rsk)
             rsk.pk = None
             rsk.expense = exp
             rsk.save()
-    indicator = Indicator.objects.filter(name_process = process.id)
+            for scn in scenario:
+                scn.pk = None
+                scn.risk = rsk
+                scn.save()
+    indicator = Indicator.objects.filter(name_process = bproc)
     for ind in indicator:
         ind.pk = None
         ind.name_process = new_process
@@ -365,7 +377,6 @@ def coppy(id, parent = None):
 
 def choise_expense(request):
     coppy(request.GET.get('process'))
-    print(request.GET.get('process'))
     process = Process.objects.filter(base = request.GET.get('process')).latest("id").get_descendants(include_self=True)
     expense = Expense.objects.filter(name_process__in = [proc.id for proc in process])
     return render(request,'create/event/choise_expense.html', context={'expense':expense})
@@ -382,6 +393,11 @@ def add_event(request):
     else:
         form = AddEvent()
     return render(request, "create/event/addevent.html",{'form':form})
+
+def risk_event(request):
+    exp = Expense.objects.get(id = int(request.GET.get("expense")))
+    rsk = Risk.objects.filter(expense__id = int(request.GET.get("expense")))
+    return render(request, 'create/event/event_risk.html', context={'risk': rsk,'exp':exp})
 
 #Редактирование сценария при создании мерроприятия
 def edit_scen_event(request, id):
@@ -592,7 +608,7 @@ def edit_riskevent(request, id):
 
 #редактировать сценарий
 def edit_scen(request):
-    scen = get_object_or_404(Scenario, id = request.POST.get('scenario'))
+    scen = get_object_or_404(Scenario, id = request.GET.get('scenario'))
     if request.method == "POST":
         form = AddScenario(request.POST, instance=scen)
         if form.is_valid():
