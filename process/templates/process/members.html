@@ -1,0 +1,26 @@
+{% extends "process/basic_template.html" %}
+
+{% block  Contet%}
+    <table>
+        <tr class = "first-row">
+            <td>№</td>
+            <td>Название процесса</td>
+            {% for posit in position %}
+            <td>{{posit.position}}</td>
+            {% endfor %}
+        </tr>
+        {% for proc in process %}
+        <tr class = "rowtable">
+            <td><input name = "ProcID" onclick = "check()" class = "choose" type = "radio" value = "{{proc.id}}">{{proc.id}}</td>
+            <td>{{proc.name}}</td>
+            {% for posit in position %}
+                {% for memb in memberprocess %}
+                {% if memb.proces.id == proc.id and memb.position.position == posit.position %}
+                    <td>{{memb.responsability}}</td>
+                {% endif %}
+                {% endfor %}
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </table>
+{% endblock  %}

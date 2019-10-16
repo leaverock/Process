@@ -1,0 +1,59 @@
+{% extends "formtemplate.html" %}
+
+{% block  Contet%}
+<h1>Редактировать процесса</h1>
+    <form method = "POST" >
+    {% csrf_token %}
+        <div class="field">
+            <div class = "fieldlabel"><label for="id_name_process">Группа:</label></div>
+            <div class = "fieldbox">{{ form.grop }}</div>
+        </div>
+        <hr>
+        <div class="field">
+            <div class = "fieldlabel"><label for="id_name_process">Название процесса:</label></div>
+            <div class = "fieldbox">{{ form.name }}</div>
+        </div>
+        <hr>
+        <div class="field">
+            <div class = "fieldlabel"><label for="id_start_event">Стартовое событие:</label></div>
+            <div class = "fieldbox">{{ form.start_event }}</div>
+        </div>
+        <hr>
+        <div class="field">
+            <div class = "fieldlabel"><label for="id_owner">Владелец:</label></div>
+            <div class = "fieldbox">{{ form.owner }}</div>
+        </div>
+        <hr>
+        <div class="field">
+            <div class = "fieldlabel"><label for="id_inpt">Вход:</label></div>
+            <div class = "fieldbox">{{ form.inpt }}</div>
+        </div>
+        <hr>
+        <div class="field">
+            <div class = "fieldlabel"><label for="id_outpt">Выход:</label></div>
+            <div class = "fieldbox">{{ form.outpt }}</div>
+        </div>
+        <hr>
+        <div class="field">
+            <div class = "fieldlabel"><label for="id_resurce">ресурсы:</label></div>
+            <div class = "fieldbox">{{ form.resurce }}</div>
+        </div>
+        <hr>
+        <div class="field">
+            <div class = "fieldlabel"><label for="id_isystem">И.Системы:</label></div>
+            <div class = "fieldbox">{{ form.isystem }}</div>
+        </div>
+        <hr>
+        <div class="field">
+            <div class = "fieldlabel"><label for="id_regulations">регламент:</label></div>
+            <div class = "fieldbox">{{ form.regulations }}</div>
+        </div>
+        <hr>
+        <div class="field" height = "100px">
+            <div class = "fieldlabel"><label for="id_description">Описание:</label></div>
+            <div class = "fieldbox">{{ form.description }}</div>
+        </div>
+        <hr>
+    <button type="submit" onclick = "window.close()">Сохранить</button>
+    </form>
+{% endblock  %}

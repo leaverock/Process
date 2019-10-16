@@ -1,0 +1,26 @@
+{% extends "process/basic_template.html" %}
+
+{% block  Contet%}
+<table>
+    <tr class = "first-row">
+        <td>№</td>
+        <td>Название процесса</td>
+        <td>Вход</td>
+        <td>Выход</td>
+        <td>Ресурсы</td>
+        <td>И.системы</td>
+        <td>Регламент</td>
+    </tr>
+    {% for specific in process %}
+    <tr class = "rowtable">
+        <td><input name = "ProcID"  class = "choose" type = "radio" value = "{{specific.id}}">{{specific.id}}</td>
+        <td>{{specific.name}}</td>
+        <td>{% if specific.inpt %}<a href="{{ specific.inpt.url }}" download>{{specific.inpt}}</a>{% endif %}</td>
+        <td>{% if specific.outpt %}<a href="{{ specific.outpt.url }}" download>{{specific.outpt}}</a>{% endif %}</td>
+        <td>{{specific.resurce}}</td>
+        <td>{{specific.isystem}}</td>
+        <td>{{specific.regulations}}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock  %}

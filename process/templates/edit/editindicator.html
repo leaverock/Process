@@ -1,0 +1,44 @@
+{% extends "formtemplate.html" %}
+
+{% block  Contet%}
+<h1>Редактировать показатель</h1>
+    <form method = "POST" >
+    {% csrf_token %}
+        <div class="field">
+            <label class = "fieldlabel" for="{{form.name_process.id_for_label}}">Название процесса:</label>
+            {{ form.name_process }}
+        </div>
+        <hr>
+        <div class="field">
+            <label class = "fieldlabel" for="{{form.name_indicator.id_for_label}}">название затраты:</label>
+            {{ form.name_indicator }}
+        </div>
+        <hr>
+        <div class="field">
+            <label class = "fieldlabel" for="{{form.unit.id_for_label}}">Ед.измерения:</label>
+            {{ form.unit }}
+        </div>
+        <hr>
+        <div class="field">
+            <label class = "fieldlabel" for="{{form.criterion_ind.id_for_label}}">Критерий результативности:</label>
+            {{ form.criterion_ind }}
+        </div>
+        <hr>
+        <div class="field">
+            <label class = "fieldlabel" for="{{form.method.id_for_label}}">Метод расчета:</label>
+            {{ form.method }}
+        </div>
+        <hr>
+        <h3>Критическое значение:</h3>
+        <div class="field">
+            <label class = "fieldlabel" for="{{form.left_critical_value.id_for_label}}">Не меньше:</label>
+            {{ form.left_critical_value }}
+        </div>
+        <hr>
+        <div class="field">
+            <label class = "fieldlabel" for="{{form.right_critical_value.id_for_label}}">Не больше:</label>
+            {{ form.right_critical_value }}
+        </div>
+    <button type="submit" onclick = "window.close()" name  = "exit">Сохранить и выйти </button>
+    </form>
+{% endblock  %}

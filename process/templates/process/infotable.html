@@ -1,0 +1,23 @@
+
+    <table>
+        <thead class = "first-row">
+            <td>№</td>
+            <td>Название процесса</td>
+            <td>Стартовое событие</td>
+            <td>Владелец</td>
+            <td>Описание</td>
+        </thead>
+        {% for info in process %}
+        
+        <tr class = "rowtable">
+            <td><input name = "ProcID" class = "choose" type = "radio"  value = "{{info.id}}">{{info.id}}</td>
+            <td>{{info.name}}</td>
+            <td>{{info.start_event}}</td>
+            <td>{{info.owner}}</td>
+            <td>{{info.description}}</td>
+        </tr>
+        
+        {% endfor %}
+    </table>
+    <script>
+    </script>

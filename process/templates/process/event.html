@@ -1,0 +1,30 @@
+{% extends "process/basic_template.html" %}
+
+{% block  Contet%}
+    <table>
+        <tr class = "first-row">
+            <td>Наиминование риска</td>
+            <td>Владелец риска</td>
+            <td>№</td>
+            <td>Наиминование мероприятия</td>
+            <td>Краткое описание</td>
+            <td>ответственное лицо</td>
+            <td>переодичность выполнения</td>
+            <td>Срок выполнения</td>
+            <td>Приоритет</td>
+        </tr>
+        {% for ev in event %}
+        <tr class = "rowtable">
+            <td>{{ev.name_risk}}</td>
+            <td>{{ev.owner}}</td>
+            <td>{{ev.number}}</td>
+            <td>{{ev.name_event}}</td>
+            <td>{{ev.description}}</td>
+            <td>{{ev.responsible_persons}}</td>
+            <td>{{ev.get_periodicity_display}}</td>
+            <td>{{ev.critical_date}}</td>
+            <td>{{ev.priority}}</td>
+        </tr>
+        {% endfor %}
+    </table>
+{% endblock  %}

@@ -1,0 +1,54 @@
+{% extends 'process/basic_template.html' %}
+
+{% block Contet %}
+<form>
+{% csrf_token %}
+        <table>
+            <tr>
+                <td rowspan = "3">Наиминование риска</td>
+                <td colspan = "4">Анализ сценариев реализации риска</td>
+                <td rowspan = "2" colspan = "2">Математическое ожидание последствий риска/влияния</td>
+                <td rowspan = "2" colspan = "2">Среднеквадратическое отклонение последствий риска/влияния</td>
+            </tr>
+            </tr>
+                <td rowspan = "2">Описание сценариев</td>
+                <td rowspan = "2">Вероятность реализации сценария,%</td>
+                <td colspan = "2">Влияние на показатель</td>
+            </tr>
+            <tr>
+                <td>Время</td>
+                <td>Стоимость</td>
+                <td>Время</td>
+                <td>Стоимость</td>
+                <td>Время</td>
+                <td>Стоимость</td>
+            </tr>
+            <tr>
+            
+                <td rowspan = "0">{{risk.name_risk}}</td>
+                <td><input type = "text" name = "description_scen"/></td>
+                <td><input type = "text" name = "probability_scen"/></td>
+                <td><input type = "text" name = "impact_time"/></td>
+                <td><input type = "text" name = "impact_cost"/></td>
+                {% if res != 100 %}
+                    <td colspan = "2" rowspan = "0"><input type = "submit" value = "Создать" formaction ="{% url 'create_scenario' %}" formmethod = "POST"></input></td>
+                {% else %}
+                    <td rowspan = "0">{{risk.expected_value_time}}</td>
+                    <td rowspan = "0">{{risk.expected_value_cost}}</td>
+                    <td rowspan = "0">{{risk.standard_deviation_time}}</td>
+                    <td rowspan = "0">{{risk.standard_deviation_cost}}</td>
+                {% endif %}
+            </tr>
+            {% for scenario in scen %}
+            <tr class = "rowtable">
+                <td><a onclick = "window.open('{% url 'edit_scen_event' scenario.id %}')" href = "">{{scenario.description_scen}}</a></td>
+                <td>{{scenario.probability_scen}}</td>
+                <td>{{scenario.impact_time}}</td>
+                <td>{{scenario.impact_cost}}</td>
+            </tr>
+            {% endfor %}
+            <input type = "hidden" name = "id" value = "{{risk.pk}}" />
+        </table>
+        {% comment %} <input type = "submit" value = "Расчитать приоритет мероприятия" formmethod = "POST" formaction = "{% url 'calculate_preority' %}"> {% endcomment %}
+</form>
+{% endblock  %}

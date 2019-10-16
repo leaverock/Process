@@ -1,0 +1,70 @@
+{% extends 'process/basic_template.html' %}
+
+{% block Contet %}
+<form method = "POST">
+{% csrf_token %}
+        <table>
+            <tr>
+                <td rowspan = "3">Наиминование риска</td>
+                <td colspan = "4">Анализ сценариев реализации риска</td>
+                <td rowspan = "2" colspan = "2">Математическое ожидание последствий риска/влияния</td>
+                <td rowspan = "2" colspan = "2">Среднеквадратическое отклонение последствий риска/влияния</td>
+            </tr>
+            </tr>
+                <td rowspan = "2">Описание сценариев</td>
+                <td rowspan = "2">Вероятность реализации сценария,%</td>
+                <td colspan = "2">Влияние на показатель</td>
+            </tr>
+            <tr>
+                <td>Время</td>
+                <td>Стоимость</td>
+                <td>Время</td>
+                <td>Стоимость</td>
+                <td>Время</td>
+                <td>Стоимость</td>
+            </tr>
+            <tr>
+            
+                <td rowspan = "0">{{risk.name_risk}}</td>
+                <td><input type = "text" name = "description_scen"/></td>
+                <td><input type = "text" name = "probability_scen"/></td>
+                <td><input type = "text" name = "impact_time"/></td>
+                <td><input type = "text" name = "impact_cost"/></td>
+                {% if res != 100 %}
+                    <td colspan = "2" rowspan = "0"><input type = "submit" value = "Создать" formaction ="{% url 'create_scenario' %}" formmethod = "POST"></input></td>
+                {% else %}
+                    <td rowspan = "0">{{risk.expected_value_time}}</td>
+                    <td rowspan = "0">{{risk.expected_value_cost}}</td>
+                    <td rowspan = "0">{{risk.standard_deviation_time}}</td>
+                    <td rowspan = "0">{{risk.standard_deviation_cost}}</td>
+                {% endif %}
+            </tr>
+            {% for scenario in scen %}
+            <tr class = "rowtable">
+                <td> <input name = "ScenID"  class = "choose" type = "radio" value = "{{scenario.id}}">{{scenario.description_scen}}</td>
+                <td>{{scenario.probability_scen}}</td>
+                <td>{{scenario.impact_time}}</td>
+                <td>{{scenario.impact_cost}}</td>
+            </tr>
+            {% endfor %}
+            <input type = "hidden" name = "id" value = "{{risk.pk}}" />
+        </table>
+        <input type = "submit" value = "Расчитать" formmethod = "POST" formaction = "{% url 'calculate' %}">
+        </form>
+        <script>
+
+  $(".rowtable").click(function(){
+    $(this).find(":radio").prop("checked",true);
+    ScenID = $(this).find(":radio").val();
+    $(".rowtable").each(function(i,elem) {
+    if($(this).find(":radio").is(':checked')){
+      $(this).css({'background-color':'rgb(224, 222, 210)'});
+    }
+    else{
+      $(this).css({'background-color':''});
+    }
+  });
+    window.open("{% url 'edit_scen'%}?scenario="+ScenID,'print_popup',width=1000,height=800);
+  });
+</script>
+{% endblock  %}

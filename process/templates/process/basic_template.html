@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+    {% block cont %}
+    {% load static %}
+        <div>
+          <div class = "tabs">
+            <ul>
+              <!--Общая информация-->
+              <li><a href = "{% url 'info' %}" >
+              <div {% if request.resolver_match.url_name == 'info' %}class = "active"{% endif %} class = "tabc">Общая информация</div></a></li>
+              <!--Участники-->
+              <li><a href = "{% url 'members' %}" ><div {% if request.resolver_match.url_name == 'members' or request.resolver_match.url_name == 'submember' %}class = "active"{% endif %} class = "tabc">Участники</div></a></li>
+              <!--Спецификация-->
+              <li><a href = "{% url 'specification' %}">
+              <div {% if request.resolver_match.url_name == 'specification' or request.resolver_match.url_name == 'subspecification' %}class = "active"{% endif %} class = "tabc">Спецификация</div></a></li>
+              <!--Затраты-->
+              <li><a href = "{% url 'expenses' %}">
+              <div {% if request.resolver_match.url_name == 'expenses' or request.resolver_match.url_name == 'subexpense' %}class = "active"{% endif %} class = "tabc">Затраты</div></a></li>
+              <!--Риски-->
+              <li><a href = "{% url 'allrisk' %}"><div {% if request.resolver_match.url_name == 'risk' or request.resolver_match.url_name == 'scenar' or request.resolver_match.url_name == 'risk_indicator' or request.resolver_match.url_name == 'edit_riskevent' or request.resolver_match.url_name == 'allrisk' %}class = "active"{% endif %} class = "tabc">Риски</div></a></li>
+              <!--Мероприятия-->
+              <li><a href = "{% url 'event' %}"><div {% if request.resolver_match.url_name == 'event' %}class = "active"{% endif %} class = "tabc">Мероприятия</div></a></li>
+              <!--Показатели-->
+              <li><a href = "{% url 'indicator' %}"><div {% if request.resolver_match.url_name == 'indicator' or request.resolver_match.url_name == 'indicator-detail' %}class = "active"{% endif %} class = "tabc">Показатели</div></a></li>
+              <!--Диаграмма-->
+              <li><a href = "{% url 'graphic' %}"><div {% if request.resolver_match.url_name == 'graphic' %}class = "active"{% endif %} class = "tabc">Диаграмма</div></a></li>
+            </ul>
+          </div>
+          {% csrf_token %}
+          <div class = "wrapper">
+            <div class = "content">
+                {% block  Contet%}
+                {% endblock  %}
+            </div>
+            <div class = "functabs">
+                <div class = "tab">
+                    <input type="radio" name="tabs-1" checked="checked" id="tabs-1-0" />
+                        <label for="tabs-1-0">Действия</label>
+                        <div>
+                            <ul>
+                                <li><input class = "buton" type = "button" style="background-image: url({% static 'image/plus.svg' %})"formaction = "{% url 'coppy' %}" formmethod = "POST">Создать копию процесса</input></li>
+                                <li><input class = "buton" type = "button" style="background-image: url({% static 'image/red.svg' %})" onclick = "$.ajax('{% url 'delete' %}?checkedfield=' + ProcID, {success:data=>$('.content').html(data)})" formmethod = "POST">Удалить</input></li>
+                                <li><input class = "buton" type = "button" style="background-image: url({% static 'image/blue.svg' %})" formaction = "" formmethod = "POST">Согласовать изменения</input></li>
+                                <li><input class = "buton" type = "button" style="background-image: url({% static 'image/redg.svg' %})" formaction = "" formmethod = "POST">Утвердить изменения</input></li>
+                                <li><input class = "buton" type = "button" style="background-image: url({% static 'image/bluep.svg' %})" formaction = "" formmethod = "POST">Делигировать права</input></li>
+                            <ul>
+                        </div>
+                </div>
+                <div class = "tab">
+                <input type="radio" name="tabs-1" id="tabs-1-1" />
+                        <label for="tabs-1-1">Редактировать</label>
+                        <div>
+                            <ul>
+                                <!--Создать-->
+                                <li><input class = "buton" type = "button" style="background-image: url({% static 'image/plus.svg' %})" 
+                                {% if request.resolver_match.url_name == 'event'%}  onclick = "window.open('{% url 'addevent' %}')"
+                                {% else %} onclick = "window.open('{% url 'addprocess' %}')"
+                                {% endif %} formmethod = "POST">Создать</input></li>
+                                <!--Редактировать-->
+                                <li><input class = "buton" type = "button" style="background-image: url({% static 'image/bluep.svg' %})"  {% if request.resolver_match.url_name == 'info' or request.resolver_match.url_name == 'members' or request.resolver_match.url_name == 'specification' %}
+                                onclick = "window.open('{% url 'edit' %}?checkedfield=' + ProcID,'print_popup','width=620,height=660')"
+                                {% elif request.resolver_match.url_name == 'indicator'%} 
+                                onclick = "window.open('{% url 'edit_indicator' %}?checkedfield=' + ProcID,'print_popup','width=600,height=800')"
+                                {% elif request.resolver_match.url_name == 'expenses'%} 
+                                onclick = "window.open('{% url 'editexpence' %}?checkedfield=' + ProcID,'print_popup','width=600,height=265')"
+                                {% endif %}>Редактировать</input></li>
+                            <ul>
+                        </div>
+                </div>
+            </div>
+          </div>
+        </div>
+        <div id="forms" class="modalbackground">
+            <div class="modalforms">
+                {% block  Forms%}
+                {% endblock  %}
+            </div>
+        </div>
+      <script>
+
+          $(".rowtable").click(function(){
+            $(this).find(":radio").prop("checked",true);
+            ProcID = $(this).find(":radio").val();
+            $(".rowtable").each(function(i,elem) {
+            if($(this).find(":radio").is(':checked')){
+              $(this).css({'background-color':'rgb(224, 222, 210)'});
+            }
+            else{
+              $(this).css({'background-color':''});
+            }
+          });
+            
+    });
+      </script>
+{% endblock %}

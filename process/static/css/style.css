@@ -1,0 +1,390 @@
+body{
+    font-family: Arial, Helvetica, sans-serif;
+}
+table {
+    border-collapse: collapse;
+    border: 1px solid #000;
+    width: 1180px;
+    font-size: 14px;
+}
+
+.buton{
+    height: 25px;
+    width: 25px;
+    border-radius: 15px;
+    
+}
+
+td {
+    border: 1px solid grey;
+    padding: 10px
+}
+
+.wrapper{
+    display: flex;
+    flex-direction: row;
+}
+
+
+ input[type = "radio"]{
+    position:fixed;
+    opacity:0;
+}
+li{
+    list-style-type: none;
+    margin: 5px;
+}
+
+ul{
+    margin-left: -30px;
+}
+
+.functabs {
+    width: 250px;
+    height: 385px;
+    margin-left: 10px;
+    margin-top: -35px;
+   }
+.functabs .tab {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+.functabs,
+.functabs input[type="radio"]:checked + label {
+    position: relative;
+}
+.functabs .tab,
+.functabs input[type="radio"] + label {
+    display: inline-block;
+}
+.functabs .tab > div,
+.functabs input[type="radio"] {
+    position: absolute;
+}
+.functabs .tab > div,
+.functabs input[type="radio"] + label {
+    border: solid 1px #ccc;
+}
+.functabs {
+   font: normal 15px Arial, Sans-serif;
+    color: #404040;
+}
+.functabs .tab {
+    vertical-align: top;
+}
+.functabs .tab:first-child {
+    margin-left: 0px;
+}
+
+.functabs .tab > div {
+    top: 33px;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 0 0px;
+    overflow: auto;
+    background: white;
+    border-radius: 5px;
+
+}
+.functabs input[type="radio"] + label {
+    margin: 0 -3px 0 0;
+    padding: 0 18px;
+    line-height: 20px;
+    background: #f1f1f1;
+    text-align: center;
+}
+#tabs-1-1 + label{
+       border-radius: 0 5px 5px 0;
+}
+.functabs input[type="radio"]:checked + label {
+    z-index: 1;
+    background: blue;
+    color: aliceblue;
+    border-bottom-color: rgb(243, 241, 232);
+    cursor: default;
+}
+.functabs input[type="radio"] {
+    opacity: 0;
+}
+.functabs input[type="radio"] ~ div {
+    display: none;
+}
+.functabs input[type="radio"]:checked:not(:disabled) ~ div {
+    display: block;
+   }
+.functabs input[type="radio"]:disabled + label {
+    opacity: .5;
+    cursor: no-drop;
+}
+
+.tabs,
+    .tabs ul{
+    width: 1200px;
+    margin: 0px;
+    
+}
+.tabs ul li{
+    display: inline-block; 
+}
+
+.tabs li > div{
+    border: solid 1px #ccc;
+}
+
+
+.tabc{
+    border-radius: 5px 5px 0 0; 
+    margin: 0 0 -1px 0;
+    position: relative;
+    display: inline-block;
+    border: solid 1px #ccc;
+    height: 30px;
+    background-color: #f1f1f1;
+    color: black;
+    z-index: 1;
+    font-size: 20px;
+    padding: 0px 2px;
+}
+.tabs ul,
+   .tabs li {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+   }
+
+.content{
+    z-index: 2;
+    background-color: rgb(243, 241, 232);
+    border: solid 1px #ccc;
+    height: 350px;
+    width: 1200px;
+    top: 33px;
+    bottom: 0;
+    left: 0;
+    padding: 8px;
+    overflow: auto;
+    background: rgb(243, 241, 232);
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+.tabs a{
+    text-decoration: none;
+}
+.content input[type = "text"]{
+    width: 90px;
+}
+
+.active{
+    border-radius: 5px 5px 0 0;
+    position: relative;
+    margin: 0 0 -2px 0;
+    border: solid 1px #ccc;
+    height: 30px;
+    background-color: rgb(243, 241, 232);
+    color: black;
+    z-index: 3;
+    border-bottom-color: rgb(243, 241, 232);
+    cursor: default;
+    border-top-color: orange;
+    border-top-width: 3px;
+    font-size: 20px;
+    padding: 0 2px;
+}
+
+::-webkit-scrollbar {
+    width: 5px;
+}
+ 
+::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 6px rgba(243, 241, 232); 
+    border-radius: 10px;
+}
+    
+::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    box-shadow: inset 0 0 6px rgb(170, 168, 157); 
+}
+
+
+.treeblock{
+    height: 346px;
+    width: 250px;
+    border: solid 1px #ccc;
+    overflow: scroll;
+}
+
+
+.tree, 
+.tree ul,
+.tree li {
+  margin: 0;
+  padding: 0;
+  line-height: 1;
+  list-style: none;
+}
+.tree ul {
+  margin: 0 0 0 .5em; /* вести линию вниз где-то с полбуквы родителя */
+}
+.tree > li:not(:only-child),
+.tree li li {
+  position: relative;
+  padding: .2em 0 0 1.2em; /* отступ до текста; для раскрывающегося списка в ряде случаев (в Хроме есть баг) padding-top (.2em) лучше указывать в px */
+}
+.tree li:not(:last-child) {
+  border-left: 1px solid #ccc; /* толщина, цвет и стиль (вместо сплошной пунктирная или точечная) вертикальной линии */
+}
+.tree li li:before,
+.tree > li:not(:only-child):before { /* горизонтальная линия */
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1.1em; /* не более отступа до текста (1.2em) */
+  height: .7em; /* начинается приблизительно с половины высоты буквы (.5em + .2em) */
+  border-bottom: 1px solid #ccc;
+}
+.tree li:last-child:before { /* вертикальная линия последнего пункта в каждом списке */
+  width: calc(1.1em - 1px); /* для перфекционистов */
+  border-left: 1px solid #ccc;
+}
+.tree .drop {
+    position: absolute;
+    left: -.5em;
+    top: .4em; /* .2em (font-size: 80%;) + .2em (padding из .treeCSS li li) */
+    width: .9em;
+    height: .9em;
+    line-height: .9em;
+    text-align: center;
+    background: #fff;
+    font-size: 80%;
+    cursor: pointer;
+  }
+  .tree li:last-child > .drop {
+    margin-left: 1px;
+  }
+  .tree .drop + ul {
+    display: none;
+  }
+  .tree .dropM + ul {
+    display: block;
+  }
+
+.search{
+    border-radius: 5px;
+    margin-bottom: 9px;
+    width: 250px;
+    height: 25px;
+}
+
+.cont{
+    margin-left: 10px;
+}
+
+.btn,.fbtn,.lbtn{
+    margin: 0 0 5 0;
+    padding: 0 18px;
+    line-height: 20px;
+    background: #f1f1f1;
+    text-align: center;
+}
+
+.fbtn{
+    border-radius:  5px 0 0 5px; 
+}
+
+.lbtn{
+    border-radius: 0 5px 5px 0;
+}
+
+.top .user{
+    margin-left: auto;
+    margin-right: 0px;
+}
+
+.top{
+    display: flex;
+    flex-direction: row;
+    width: 1720px;
+}
+
+
+
+
+
+.modalbackground {
+    margin: 0; /* убираем отступы */
+    padding: 0; /* убираем отступы */
+    position: fixed; /* фиксируем положение */
+    top:0; /* растягиваем блок по всему экрану */
+    bottom:0;
+    left:0;
+    right:0;
+    background: rgba(0,0,0,0.5); /* полупрозрачный цвет фона */
+    z-index:100; /* выводим фон поверх всех слоев на странице браузера */
+    opacity:0; /* Делаем невидимым */
+    pointer-events: none; /* элемент невидим для событий мыши */
+    }
+    
+    /* при отображении модального окно - именно здесь начинается магия */
+    .modalbackground:target {
+        opacity: 1; /* делаем окно видимым */ 
+        pointer-events: auto; /* элемент видим для событий мыши */
+    }
+    
+    /* ширина диалогового окна и его отступы от экрана */
+    .modalwindow, .modalforms {
+        width: 100%;
+        max-width: 300px;
+        margin: 10% auto;
+        padding: 2%;
+        background: #fff;
+        border-radius: 3px;
+    }
+    
+    /* настройка заголовка */
+    .modalwindow h3 {
+    padding: 0;
+    margin: 0;
+    }
+    
+    /* оформление сообщение */
+    .modalwindow p {
+    padding: 0;
+    margin: 4% 0 8% 0;
+    }
+    
+    /* вид кнопки ЗАКРЫТЬ */
+    .modalwindow a {
+    display: block;
+    color: #fff;
+    background: #369;
+    padding: 2%;
+    margin: 0 auto;
+    width: 50%;
+    border-radius: 3px;
+    text-align: center;
+    text-decoration: none;
+    }
+    
+    /* вид кнопки ЗАКРЫТЬ при наведении на нее мыши */
+    .modalwindow a:hover {
+    background: #47a;
+    }
+
+    .help{
+        margin-left: 8px;
+    }
+
+
+.rowtable:hover td{
+    background-color: rgb(224, 222, 210);
+}
+
+.first-row{
+    background-color: rgb(241, 236, 207);
+    
+}

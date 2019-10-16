@@ -1,0 +1,20 @@
+{% extends "formtemplate.html" %}
+
+{% block  Contet%}
+<h1>Добавить затраты</h1>
+    <form method = "POST" >
+    {% csrf_token %}
+        <div class="field">
+            <label class = "fieldlabel" for="id_name_expence">Критическое значение для времени:</label>
+            <input type="text" name = "critical_value_time">
+        </div>
+        <hr>
+        <div class="field">
+            <label class = "fieldlabel" for="id_unit">Критическое значение для стоимости:</label>
+            <input type="text" name = "critical_value_cost">
+        </div>
+        <hr>
+        
+    <button type="submit" name = "save">Сохранить</button>
+    </form>
+{% endblock  %}

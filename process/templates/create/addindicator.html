@@ -1,0 +1,65 @@
+{% extends "formtemplate.html" %}
+
+{% block  Contet%}
+<h1>Добавить показатель</h1>
+    <form method = "POST" >
+    {% if  indicator%}
+        <table>
+        <tr>
+            <td>№</td>
+            <td>Название процесса</td>
+            <td>Название показателя</td>
+            <td>Ед.измерения</td>
+            <td>Критерий результативности</td>
+            <td>метод расчета</td>
+        </tr>
+        {% for process in indicator %}
+        <tr class = "rowtable">
+            <td>{{process.name_process.id}}</td>
+            <td>{{process.name_process.name}}</td>
+            <td>{{process.name_indicator}}</td>
+            <td>{{process.unit}}</td>
+            <td>{{process.criterion_ind}}</td>
+            <td>{{process.method}}</td>
+        </tr>
+        {% endfor %}
+    {% endif %}
+              
+</table>
+    {% csrf_token %}
+    {{form.errors}}
+        <div class="field">
+            <label class = "fieldlabel" for="{{form.name_indicator.id_for_label}}">название затраты:</label>
+            {{ form.name_indicator }}
+        </div>
+        <hr>
+        <div class="field">
+            <label class = "fieldlabel" for="{{form.unit.id_for_label}}">Ед.измерения:</label>
+            {{ form.unit }}
+        </div>
+        <hr>
+        <div class="field">
+            <label class = "fieldlabel" for="{{form.criterion_ind.id_for_label}}">Критерий результативности:</label>
+            {{ form.criterion_ind }}
+        </div>
+        <hr>
+        <div class="field">
+            <label class = "fieldlabel" for="{{form.method.id_for_label}}">Метод расчета:</label>
+            {{ form.method }}
+        </div>
+        <hr>
+        <h3>Критическое значение:</h3>
+        <div class="field">
+            <label class = "fieldlabel" for="{{form.left_critical_value.id_for_label}}">Не меньше:</label>
+            {{ form.left_critical_value }}
+        </div>
+        <hr>
+        <div class="field">
+            <label class = "fieldlabel" for="{{form.right_critical_value.id_for_label}}">Не больше:</label>
+            {{ form.right_critical_value }}
+        </div>
+    <button type="submit" name = "save">Сохранить и продолжить</button>
+    <button type="submit" name  = "save-other">Сохранить и добавить новый </button>
+    <button type="submit" onclick = "window.close()" name  = "exit">Сохранить и выйти </button>
+    </form>
+{% endblock  %}

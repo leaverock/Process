@@ -1,0 +1,25 @@
+{% load mptt_tags %}
+<div class = "wrapper">
+        <div>
+            <input type = "text" class = "search">
+            <div class = "treeblock">
+                <ul class="tree">
+                    <li>Процессы верхнего уровня института
+                        <ul>
+                        {% recursetree nodes %}
+                            <li>
+                                <a href="{% url 'getid' node.id %}">{{ node.name }}</a>
+                                {% if not node.is_leaf_node %}
+                                    <ul class="children">
+                                        {{ children }}
+                                    </ul>
+                                {% endif %}
+                            </li>
+                        {% endrecursetree %}
+                        </li>
+                    </ul> 
+                </ul>
+            </div>
+        </div>
+
+        

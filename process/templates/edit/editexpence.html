@@ -1,0 +1,28 @@
+{% extends "formtemplate.html" %}
+>
+{% block  Contet%}
+<h1>Редактировать затраты</h1
+    <form method = "POST" >
+    {% csrf_token %}
+        <div class="field">
+            <label class = "fieldlabel" for="id_name_process">Название процесса:</label>
+            {{ form.name_process }}
+        </div>
+        <hr>
+        <div class="field">
+            <label class = "fieldlabel" for="id_name_expence">Название затраты:</label>
+            {{ form.name_expense }}
+        </div>
+        <hr>
+        <div class="field">
+            <label class = "fieldlabel" for="id_unit">Ед.измерения:</label>
+            {{ form.unit }}
+        </div>
+        <hr>
+        <div class="field">
+            <label class = "fieldlabel" for="id_expense">Расход:</label>
+            {{ form.expense }}
+        </div>
+    <button type="submit" name = "save" onclick = "window.close()">Сохранить и выйти</button>
+    </form>
+{% endblock  %}

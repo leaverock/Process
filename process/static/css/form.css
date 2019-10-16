@@ -1,0 +1,86 @@
+.field{
+    margin: 10px;
+    display: flex;
+    flex-direction: row;
+}
+
+.fieldlabel{
+    width: 200px;
+}
+
+.tabs a{
+    text-decoration: none;
+}
+
+.tabs,
+.tabs ul{
+    width: 1200px;
+    margin: 0px;
+    
+}
+.tabs ul li{
+    display: inline-block; 
+}
+
+.tabs li > div{
+    border: solid 1px #ccc;
+}
+
+
+.tabc{
+    
+    border-radius: 5px 5px 0 0; 
+    margin: 0 0 -1px 0;
+    position: relative;
+    display: inline-block;
+    border: solid 1px #ccc;
+    height: 30px;
+    background-color: #f1f1f1;
+    color: black;
+    z-index: 1;
+    font-size: 20px;
+    padding: 0px 2px;
+    
+}
+.tabs ul,
+   .tabs li {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+   }
+
+.content{
+    z-index: 2;
+    background-color: rgb(243, 241, 232);
+    border: solid 1px #ccc; 
+    top: 33px;
+    bottom: 0;
+    left: 0;
+    padding: 8px;
+    overflow: auto;
+    background: rgb(243, 241, 232);
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    min-width: 600px;
+}
+
+.active{
+    border-radius: 5px 5px 0 0;
+    position: relative;
+    margin: 0 0 -2px 0;
+    border: solid 1px #ccc;
+    height: 30px;
+    background-color: rgb(243, 241, 232);
+    color: black;
+    z-index: 3;
+    border-bottom-color: rgb(243, 241, 232);
+    cursor: default;
+    border-top-color: orange;
+    border-top-width: 3px;
+    font-size: 20px;
+    padding: 0 2px;
+}
+
+
+

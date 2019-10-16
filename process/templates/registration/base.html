@@ -1,0 +1,13 @@
+<html>
+    <head>
+      <meta charset="utf-8">
+      {% load static %}
+      <link rel="stylesheet" href="{% static 'css/reg.css' %}{{cache_key}}">
+    </head>
+    <body>
+    <div align = "center", valigh = "center">
+            {% block content %}
+            {% endblock  %}
+        </div>
+    </body>    
+</html>

@@ -1,0 +1,25 @@
+{% extends "process/basic_template.html" %}
+
+{% block  Contet%}
+<table>
+    <tr class = "first-row">
+        <td>№</td>
+        <td>Название процесса</td>
+        <td>Название показателя</td>
+        <td>Ед.измерения</td>
+        <td>Критерий результативности</td>
+        <td>метод расчета</td>
+    </tr>
+    {% for process in indicator %}
+    <tr class = "rowtable">
+        <td><input name = "ProcID" onchange = "check()" class = "choose" type = "radio" value = "{{process.id}}">{{process.name_process.id}}</td>
+        <td>{{process.name_process.name}}</td>
+        <td>{{process.name_indicator}}</td>
+        <td>{{process.unit}}</td>
+        <td>{{process.criterion_ind}}</td>
+        <td>{{process.method}}</td>
+    </tr>
+    {% endfor %}
+              
+</table>
+{% endblock  %}

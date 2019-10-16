@@ -1,0 +1,28 @@
+{% extends "process/basic_template.html" %}
+
+{% block  Contet%}
+<form>
+{% csrf_token %}
+    <table>
+        <tr class = "first-row">
+            <td>Название риска</td>
+            <td>Процесс</td>
+            <td>Математическое ожидание(тыс.руб)</td>
+            <td>Математическое ожидание(дн.)</td>
+            <td>Сигма(тыс.руб)</td>
+            <td>Сигма(дн.)</td>
+        </tr>
+        {% for rsk in risk %}
+        <tr class = "rowtable">   
+            <td>{{rsk.name_risk}}</td>
+            <td>{{rsk.expense.name_process.name}}</td>
+            <td>{{rsk.expected_value_time}}</td>
+            <td>{{rsk.expected_value_cost}}</td>
+            <td>{{rsk.standard_deviation_time}}</td>
+            <td>{{rsk.standard_deviation_cost}}</td>
+        </tr>
+        {% endfor %}
+        
+    </table>
+    </form>
+{% endblock  %}

@@ -1,0 +1,27 @@
+{% extends "formtemplate.html" %}
+
+{% block  Contet%}
+    <form method = "POST" >
+    {% csrf_token %}
+        <div class="field">
+            <label class = "fieldlabel" for="form.description_scen.id_for_label">описание сценария:</label>
+            {{ form.description_scen }}
+        </div>
+        <hr>
+        <div class="field">
+            <label class = "fieldlabel" for="form.probability_scen.id_for_label">Вероятность реализации сценария</label>
+            {{ form.probability_scen }}
+        </div>
+        <hr>
+        <div class="field">
+            <label class = "fieldlabel" for="form.impact.id_for_label">Влияние на показатель цены</label>
+            {{ form.impact_time }}
+        </div>
+        <div class="field">
+            <label class = "fieldlabel" for="form.impact.id_for_label">Влияние на показатель стоисости</label>
+            {{ form.impact_cost }}
+        </div>
+
+    <button type="submit" >Сохранить</button>
+    </form>
+{% endblock  %}

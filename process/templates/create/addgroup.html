@@ -1,0 +1,19 @@
+<html>
+    <head>
+      <meta charset="utf-8">
+      <title>Сковзные процессы</title>
+      {% load static %}
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+      <link rel="stylesheet" href="{% static 'css/style.css' %}{{cache_key}}">
+      
+    </head>
+    <body>
+    <form method = "POST">
+    {% csrf_token %}
+    {{form.as_table}}
+    <hr>
+    <input type="submit" value = "Сохранить">
+    </form>
+    
+    </body>    
+</html>

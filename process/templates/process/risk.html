@@ -1,0 +1,58 @@
+{% extends "process/basic_template.html" %}
+
+{% block  Contet%}
+<form>
+{% csrf_token %}
+    <table>
+        <tr>
+            <td rowspan = "4">Направление деятельности</td>
+            <td rowspan = "4">Наименование риска</td>
+            <td rowspan = "4">Описание риска</td>
+            <td rowspan = "4">Владелец риска</td>
+            <td colspan = "7">Оценка присущего уровня риска</td>
+        </tr>
+        <tr>
+            <td rowspan = "3">Вероятность реализации</td>
+            <td colspan = "6">Уровень воздействия</td>
+        </tr>
+        </tr>
+            <td colspan = "2">Математическое ожидание</td>
+            <td colspan = "2">Среднеквадратическое отклонение</td>
+            <td colspan = "2">Значимость риска</td>
+        </tr>
+        <tr>
+            <td>Дни</td>
+            <td>Время</td>
+            <td>Дни</td>
+            <td>Время</td>
+            <td>Дни</td>
+            <td>Время</td>
+        </tr>
+        {% for rsk in risk %}
+        <tr>   
+            <td>{{rsk.direction}}</td>
+            <td><a href = "{{rsk.get_absolute_url}}">{{rsk.name_risk}}</a></td>
+            <td>{{rsk.description}}</td>
+            <td>{{rsk.owner}}</td>
+            <td>{{rsk.probability}}</td>
+            <td>{{rsk.expected_value_time}}</td>
+            <td>{{rsk.expected_value_cost}}</td>
+            <td>{{rsk.standard_deviation_time}}</td>
+            <td>{{rsk.standard_deviation_cost}}</td>
+            <td>{{rsk.significance_risk_time}}</td>
+            <td>{{rsk.significance_risk_time}}</td>
+        </tr>
+        {% endfor %}
+        <tr>
+            <td><input type = "text" name = "direction_inpt"/></td>
+            <td><input type = "text" name = "name_risk_inpt"/></td>
+            <td><input type = "text" name = "description_inpt"/></td>
+            <td><input type = "text" name = "owner_inpt"/></td>
+            <td colspan = "7"><input type = "submit" value = "Создать" formmethod = "POST" formaction = "{% url 'create_risk' %}"></input></td>
+        </tr>
+    </table>
+    <br>
+    <input type = "submit" value = "Расчитать все риски" formmethod = "POST" formaction = "{% url 'calculateallrisk' %}"></input>
+    <input type = "hidden" name  = "expid" value = "{{exp.id}}">  
+    </form>
+{% endblock  %}

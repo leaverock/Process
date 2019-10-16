@@ -1,0 +1,35 @@
+<html>
+    <head>
+      <meta charset="utf-8">
+      {% load static %}
+      <link rel="stylesheet" href="{% static 'css/form.css' %}{{cache_key}}">
+      <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+  <link rel="stylesheet" href="/resources/demos/style.css">
+  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+  <script>
+  $( function() {
+    $( "#id_critical_date" ).datepicker({ dateFormat: 'dd.mm.yy' });
+  } );
+  </script>
+    </head>
+    <body>
+    <div>
+          <div class = "tabs">
+            <ul>
+              <li><a href = "{% url 'addprocess' %}"><div class = "{% if request.resolver_match.url_name == 'addprocess' %}active {% endif %}tabc">Процесс</div></a></li>
+              <li><a {% if not request.resolver_match.url_name == 'addprocess' %}href = "{% url 'addmember' %}"{% else %} title = "Создайте процесс"{% endif %} ><div class = "{% if request.resolver_match.url_name == 'addmember' %}active {% endif %}tabc">Участники</div></a></li>
+              <li><a {% if not request.resolver_match.url_name == 'addprocess' %}href = "{% url 'addexpence' %}" {% else %} title = "Создайте процесс"{% endif %} ><div class = "{% if request.resolver_match.url_name == 'addexpence' %}active {% endif %}tabc">Затраты</div></a></li>
+              <li><a {% if not request.resolver_match.url_name == 'addprocess' %}href = "{% url 'addindicator' %}" {% else %} title = "Создайте процесс"{% endif %}><div class = "{% if request.resolver_match.url_name == 'addindicator' %}active {% endif %}tabc">Показатели</div></a></li>
+            </ul>
+          </div>
+          {% csrf_token %}
+          <div class = "wrapper">
+            <div class = "content">
+                {% block  Contet%}
+                {% endblock  %}
+            </div>
+          </div>
+    </body>    
+</html>
+

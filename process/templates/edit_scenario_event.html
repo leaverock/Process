@@ -1,0 +1,23 @@
+{% extends "formtemplate.html" %}
+
+{% block  Contet%}
+    <form method = "POST" >
+    {% csrf_token %}
+        <div class="field">
+            <label for="form.description_scen.id_for_label">описание сценария:</label>
+            {{ form.description_scen }}
+        </div>
+        <div class="field">
+            <label for="form.probability_scen.id_for_label">Вероятность реализации сценария</label>
+            {{ form.probability_scen }}
+        </div>
+        <div class="field">
+            <label for="form.impact.id_for_label">Влияние на показатель</label>
+            {{ form.impact }}
+        </div>
+
+        {{form.risk}}
+
+    <button type="submit">Сохранить</button>
+    </form>
+{% endblock  %}

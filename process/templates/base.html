@@ -1,0 +1,68 @@
+<html>
+    <head>
+      <meta charset="utf-8">
+      <title>Сковзные процессы</title>
+      {% load static %}
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+      <link rel="stylesheet" href="{% static 'css/style.css' %}{{cache_key}}">
+      
+    </head>
+    <body>
+    <div class = "top">
+        <div>
+            <div class = "wrapper">
+                <input type = "submit" value = "Сковзные" class = "fbtn">
+                <input type = "submit" value = "ПВУ" class = "btn">
+                <input type = "submit" value = "Подразделения" class = "lbtn">
+            </div>
+            <div style = "margin-bottom:5px;">
+                ПВУ>Основные>Менеджмент проекта>Менеджмент затрат
+            </div>
+        </div>
+        <div class = "user">
+            {% if user.is_authenticated %}
+                <a href="{% url 'logout'%}?next={{request.path}}"> Выйти</a>
+                {{ user.get_full_name }}
+            {% else %}
+               <a href="{% url 'login'%}?next={{request.path}}">Авторизоваться</a>  
+            {% endif %} 
+        </div>
+        <div class = "help">
+            <a href="#download"> Помощь</a></ul>
+        </div>
+    </div>
+    {% load tegs %}
+    {% tree %}
+        <div class = "cont">
+            {% block cont %}
+            {% endblock  %}
+        </div>
+    </div>
+    <div id="download" class="modalbackground">
+            <div class="modalwindow">
+                <a href = "{% static 'help/description.docx' %}" download>Описание</a>
+                <a href = "{% static 'help/method.docx' %}" download>Методика</a>
+                <a href = "{% static 'help/TZ.docx' %}" download>ТЗ Сковзные процессы</a>
+                <br>
+                <a href=" ">Закрыть</a>
+            </div>
+        </div>
+    <script>
+    (function() {
+    var ul = document.querySelectorAll('.tree > li:not(:only-child) ul, .tree ul ul');
+    for (var i = 0; i < ul.length; i++) {
+        var div = document.createElement('div');
+        div.className = 'drop';
+        div.innerHTML = '►';  
+        ul[i].parentNode.insertBefore(div, ul[i].previousSibling);
+        div.onclick = function() {
+        this.innerHTML = (this.innerHTML == '►' ? '▼' : '►');
+        this.className = (this.className == 'drop' ? 'drop dropM' : 'drop');
+        }
+    }
+    })();
+
+   
+    </script>
+    </body>    
+</html>

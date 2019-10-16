@@ -1,0 +1,24 @@
+{% extends "registration/base.html" %}
+
+{% block content %}
+
+  {% if form.errors %}
+    <p class="error">Сожалеем, вы неправильно ввели логин или пароль</p>
+  {% endif %}
+
+  <form action='.' method='post'>
+    {% csrf_token %}
+    <div class = "main">
+        <H1>Авторизация</H1>
+    
+        <ul><label for="username">Логин:</label></ul>
+        <ul><input type="text" name="username" value="" id="username" placeholder = "Логин"></ul>
+        <ul><label for="password">Пароль:</label></ul>
+        <ul><input type="password" name="password" value="" id="password" placeholder = "Пароль"></ul>
+
+        <input type="submit" value="login" />
+        <input type="hidden" name="next" value="{% url 'getid' 1  %}" />
+    </div>
+  </form>
+
+{% endblock %}
