@@ -11,7 +11,16 @@
         <td>И.системы</td>
         <td>Регламент</td>
     </tr>
-    {% for specific in process %}
+    <tr class = "rowtable">
+        <td><b><input name = "ProcID"  class = "choose" type = "radio" value = "{{process.id}}">{{process.id}}</td>
+        <td><b>{{process.name}}</td>
+        <td><b>{% if process.inpt %}<a href="{{ process.inpt.url }}" download>{{process.inpt}}</a>{% endif %}</td>
+        <td><b>{% if process.outpt %}<a href="{{ process.outpt.url }}" download>{{process.outpt}}</a>{% endif %}</td>
+        <td><b>{{process.resurce}}</td>
+        <td><b>{{process.isystem}}</td>
+        <td><b>{{process.regulations}}</td>
+    </tr>
+    {% for specific in children %}
     <tr class = "rowtable">
         <td><input name = "ProcID"  class = "choose" type = "radio" value = "{{specific.id}}">{{specific.id}}</td>
         <td>{{specific.name}}</td>

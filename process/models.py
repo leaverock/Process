@@ -203,7 +203,7 @@ class EventModels(models.Model):
         ('и' ,'регулярное'),
     )
     
-    name_risk = models.ForeignKey(Risk, on_delete = models.CASCADE,verbose_name = "Риск")
+    expense = models.ForeignKey(Expense, on_delete = models.CASCADE,verbose_name = "Затрата")
     owner = models.CharField(max_length = 150,verbose_name = "Владелец")
     number = models.IntegerField(verbose_name = "Номер")
     name_event = models.CharField(max_length=  200,verbose_name = "Название мероприятия")

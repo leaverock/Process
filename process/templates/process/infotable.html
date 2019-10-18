@@ -7,11 +7,18 @@
             <td>Владелец</td>
             <td>Описание</td>
         </thead>
-        {% for info in process %}
+        <tr class = "rowtable">
+            <td><input name = "ProcID" class = "choose" type = "radio"  value = "{{process.id}}">{{process.id}}</td>
+            <td><b>{{process.name}}</b></td>
+            <td><b>{{process.start_event}}</b></td>
+            <td><b>{{process.owner}}</b></td>
+            <td><b>{{process.description}}</b></td>
+        </tr>
+        {% for info in children %}
         
         <tr class = "rowtable">
             <td><input name = "ProcID" class = "choose" type = "radio"  value = "{{info.id}}">{{info.id}}</td>
-            <td>{{info.name}}</td>
+            <td><a href = "{% url 'getid' info.id %}">{{info.name}}</a></td>
             <td>{{info.start_event}}</td>
             <td>{{info.owner}}</td>
             <td>{{info.description}}</td>

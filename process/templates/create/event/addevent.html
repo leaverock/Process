@@ -5,11 +5,7 @@
             <form method = "POST" autocomplete = 'off' >
             {% csrf_token %}
             {{form.errors}}
-                <div class="field">
-                    <label class = "fieldlabel" for="{{form.name_risk.id_for_label}}">Название риска:</label>
-                    {{ form.name_risk }}
-                </div>
-                <hr>
+                
                 <div class="field">
                     <label class = "fieldlabel" for="{{form.owner.id_for_label}}">Владелец риска:</label>
                     {{ form.owner }}

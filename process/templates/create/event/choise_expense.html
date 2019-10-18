@@ -13,7 +13,7 @@
     {% for exp in expense %}
     <tr class = "rowtable">
         <td><input name = "ProcID"  class = "choose" type = "radio" value = "{{exp.id}}">{{exp.name_process.id}}</td>
-        <td>{{exp.name_expense}}</td>
+        <td>{{exp.name_process}}</td>
         <td>{{exp.lead_time}}</td>
         <td>{{exp.execution_costs}}</td>
         <td>{{exp.probability_time}}%</td>
@@ -21,6 +21,7 @@
     </tr>
     {% endfor %}        
 </table>
+<input type="submit" value="Расчитать процесс">
     <script>
 
   $(".rowtable").click(function(){
@@ -34,7 +35,7 @@
       $(this).css({'background-color':''});
     }
   });
-    window.location.replace("{% url 'risk_event' %}?expense=" + IndID);
+    window.open("{% url 'addevent' %}?expense=" + IndID);
   });
 </script>
 {% endblock  %}

@@ -63,6 +63,7 @@
                                 {% elif request.resolver_match.url_name == 'expenses'%} 
                                 onclick = "window.open('{% url 'editexpence' %}?checkedfield=' + ProcID,'print_popup','width=600,height=265')"
                                 {% endif %}>Редактировать</input></li>
+                                <a href="{% url 'export_xls' %}">Export</a>
                             <ul>
                         </div>
                 </div>

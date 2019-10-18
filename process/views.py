@@ -21,6 +21,7 @@ import math
 from io import BytesIO
 import base64
 from scipy.stats import norm
+import xlwt
 
 
 #endregion
@@ -36,10 +37,11 @@ class ProcessView(View):
     def get(self, request):
         try:
             PrID = request.session['PrId']
-            process = Process.objects.get(id = PrID).get_descendants(include_self=True)
+            process = Process.objects.get(id = PrID)
+            children_process = process.get_children()
         except:
             process = Process.objects.all()
-        return render(request,'process/info.html', context={'process':process})
+        return render(request,'process/info.html', context={'process':process, "children":children_process})
 
 #вкладка "Участники"
 @method_decorator(login_required(login_url='/process/accounts/login/'), name = 'dispatch')
@@ -58,10 +60,11 @@ class SpecificationView(View):
     def get(self,request):
         try:
             PrID = request.session['PrId']
-            process = Process.objects.get(id = PrID).get_descendants(include_self=True)
+            process = Process.objects.get(id = PrID)
+            children_process = process.get_children()
         except:
             process = Process.objects.all()
-        return render(request,'process/specification.html', context={'process':process})
+        return render(request,'process/specification.html', context={'process':process,"children":children_process})
 
     
 #вкладка "Затраты"
@@ -70,9 +73,11 @@ class ExpensesView(View):
 
     def get(self,request):
         PrID = request.session['PrId']
-        process = Process.objects.get(id = PrID).get_descendants(include_self=True)
+        process = Process.objects.get(id = PrID)
+        children_process = process.get_children()
         expense = Expense.objects.filter(name_process__in = [proc.id for proc in process])
-        return render(request,'process/expenses.html', context={'expense':expense})
+        children_expense = Expense.objects.get(name_process = children_process)
+        return render(request,'process/expenses.html', context={'expense':expense,"children": children_expense})
 
 #вкладка "Показатели"
 @method_decorator(login_required(login_url='/process/accounts/login/'), name = 'dispatch')
@@ -135,13 +140,13 @@ class GraphicView(View):
         expense1 = Expense.objects.get(name_process__base = PrID)
         mu =float(expense.expected_value_time)
         sigma = float(expense.standard_deviation_time)
-        mu1 =float(expense1.expected_value_time)
-        sigma1 = float(expense1.standard_deviation_time)
+        muc =float(expense1.expected_value_time)
+        sigmac = float(expense1.standard_deviation_time)
         x_axis = np.arange(mu - 5*sigma, mu + 5*sigma, 0.001)
         plt.plot(x_axis, norm.pdf(x_axis,mu,sigma), color = 'k')
-        plt.plot(x_axis, norm.pdf(x_axis,mu1,sigma1), color = 'g')
+        plt.plot(x_axis, norm.pdf(x_axis,muc,sigmac), color = 'g')
         plt.axvline(x=mu,linewidth=2, color='k', linestyle = ":")
-        plt.axvline(x=mu1,linewidth=2, color='g', linestyle = ":")
+        plt.axvline(x=muc,linewidth=2, color='g', linestyle = ":")
         plt.axvline(x=expense.critical_time,linewidth=2, color='r')
         plt.ylabel('Вероятность')
         plt.xlabel('Показатель')
@@ -159,8 +164,12 @@ class GraphicView(View):
         mu1 =float(expense.expected_value_cost)
         sigma1 = float(expense.standard_deviation_cost)
         x_axis = np.arange(mu1 - 5*sigma1, mu1 + 5*sigma1, 0.001)
+        mu1c =float(expense1.expected_value_cost)
+        sigma1c = float(expense1.standard_deviation_cost)
         plt.plot(x_axis, norm.pdf(x_axis,mu1,sigma1), color = 'k')
+        plt.plot(x_axis, norm.pdf(x_axis,mu1c,sigma1c), color = 'g')
         plt.axvline(x=mu1,linewidth=2, color='k' , linestyle = ":")
+        plt.axvline(x=mu1c,linewidth=2, color='g' , linestyle = ":")
         plt.axvline(x=expense.critical_cost,linewidth=2, color='r')
         plt.ylabel('Вероятность')
         plt.xlabel('Показатель')
@@ -329,11 +338,11 @@ def calculate_all_for_process(request):
 
 #endregion
 #region Мероприятия
-
+#Выбор процесса для проведения меропритий
 def choise_process(request):
     process = Process.objects.all()
     return render(request, "create/event/choise_process.html",{'process':process})
-
+#рекурсивный метод для создания копии процесса
 def coppy(id, parent = None):
     process = Process.objects.get(pk = id)
     if parent:
@@ -374,29 +383,47 @@ def coppy(id, parent = None):
     proc = Process.objects.get(id = id).get_children()
     for pr in proc:
         coppy(pr.id, new_process.id)
-
-def choise_expense(request):
+#создание копии процесса
+def coppy_process(request):
     coppy(request.GET.get('process'))
+    return redirect("choise_expense"+'/?process='+str(request.GET.get("process")))
+
+#Выбор затраты для меропрития
+def choise_expense(request):
     process = Process.objects.filter(base = request.GET.get('process')).latest("id").get_descendants(include_self=True)
     expense = Expense.objects.filter(name_process__in = [proc.id for proc in process])
     return render(request,'create/event/choise_expense.html', context={'expense':expense})
 
 #Создание Мероприятия
 def add_event(request):
+    expense = request.GET.get("expense")
     if request.method == "POST":
         form = AddEvent(request.POST)
         if form.is_valid():
-            event = form.save()
+            event = form.save(commit=False)
+            event.expense = Expense.objects.get(id  = expense) 
             event.save()  
-            return HttpResponseRedirect("editscen/"+str(event.name_risk.id)+"/")
+            return redirect("change_expense", expense)
                  
     else:
         form = AddEvent()
     return render(request, "create/event/addevent.html",{'form':form})
 
-def risk_event(request):
-    exp = Expense.objects.get(id = int(request.GET.get("expense")))
-    rsk = Risk.objects.filter(expense__id = int(request.GET.get("expense")))
+def change_expense(request, id):
+    expence = get_object_or_404(Expense,id= id)
+    if request.method == "POST":
+        form = AddExpense(request.POST, instance=expence)
+        if form.is_valid():
+            expence = form.save()
+            expence.save()
+            return redirect('risk_event', id)
+    else:
+        form = AddExpense(instance=expence)
+    return render(request, "create/event/change_expense.html",{'form':form})
+
+def risk_event(request, id):
+    exp = Expense.objects.get(id = id)
+    rsk = Risk.objects.filter(expense__id = id)
     return render(request, 'create/event/event_risk.html', context={'risk': rsk,'exp':exp})
 
 #Редактирование сценария при создании мерроприятия
@@ -671,4 +698,46 @@ def delete(request):
             processes = Process.objects.get(id = PrID).get_descendants(include_self=True)
             context['process'] = processes
         return render(request, 'process/infotable.html', context)
+
+def export_xls(request):
+    response = HttpResponse(content_type='application/ms-excel')
+    response['Content-Disposition'] = 'attachment; filename="process.xls"'
+
+    wb = xlwt.Workbook(encoding='utf-8')
+    description_sheet = wb.add_sheet("Текстовое описание")
+    process_sheet = wb.add_sheet('Process')
+
+    # Sheet header, first row
+    row_num = 0
+
+    font_style = xlwt.XFStyle()
+    font_style.font.bold = True
+
+    columns = ['','Исходный процесс','Измененный процесс' ]
+
+    for col_num in range(len(columns)):
+        process_sheet.write(row_num, col_num, columns[col_num], font_style)
+
+    # Sheet body, remaining rows
+    font_style = xlwt.XFStyle()
+
+    process = Process.objects.get(id = request.session['PrId'])
+    change_process = Process.objects.get(base = process.id)
+    expense = Expense.objects.get(name_process = process.id)
+    expense_change = Expense.objects.get(name_process = change_process.id)
+    rows = [['Стоимость процесса без учета рисков, тыс. руб.', expense.execution_costs,expense_change.execution_costs],
+            ['Стоимость процесса с учетом рисков, тыс. руб.', expense.expected_value_cost,expense_change.expected_value_cost],
+            ['Вероятность реализации стоимости', expense.probability_cost,expense_change.probability_cost],
+            ['Время выполнения процесса без учета рисков, дн.', expense.lead_time,expense_change.lead_time],
+            ['Время выполнения процесса с учетом рисков, дн.', expense.expected_value_time,expense_change.expected_value_time],
+            ['Вероятность реализации времения', expense.probability_time,expense_change.probability_time],
+            ]
+
+    for row in rows:
+        row_num += 1
+        for col_num in range(len(row)):
+            process_sheet.write(row_num, col_num, row[col_num], font_style)
+
+    wb.save(response)
+    return response
 #endregion

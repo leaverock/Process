@@ -1,0 +1,24 @@
+{% extends "create/event/base.html" %}
+
+{% block  Contet%}
+<form>
+{% csrf_token %}
+<table>
+    <tr class = "first-row">
+        <td>№</td>
+        <td>Подпроецесс</td>
+        <td>Время выполнения (дн.)</td>
+        <td>Расходы на выполнение этапа(тыс.руб.)</td>
+    </tr>
+    <tr class = "">
+        <td><input name = "ProcID"  class = "choose" type = "radio" value = "{{exp.id}}">{{exp.name_process.id}}</td>
+        <td>{{form.name_expense}}</td>
+        <td>{{form.lead_time}}</td>
+        <td>{{form.execution_costs}}</td>
+    </tr>
+           
+</table>
+{{form.errors}}
+<input type="submit" value = "Далее" formmethod = "POST">
+</form>
+{% endblock %}

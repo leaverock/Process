@@ -42,7 +42,7 @@ class AddEvent(forms.ModelForm):
     class Meta:
         model = EventModels
         fields = "__all__"
-        exclude = ('priority',)
+        exclude = ('priority','expense')
 
 
 class AddGroup(forms.ModelForm):
