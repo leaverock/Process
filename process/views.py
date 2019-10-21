@@ -41,6 +41,7 @@ class ProcessView(View):
             children_process = process.get_children()
         except:
             process = Process.objects.all()
+            children_process = None
         return render(request,'process/info.html', context={'process':process, "children":children_process})
 
 #вкладка "Участники"
@@ -75,8 +76,8 @@ class ExpensesView(View):
         PrID = request.session['PrId']
         process = Process.objects.get(id = PrID)
         children_process = process.get_children()
-        expense = Expense.objects.filter(name_process__in = [proc.id for proc in process])
-        children_expense = Expense.objects.get(name_process = children_process)
+        expense = Expense.objects.filter(name_process = process)
+        children_expense = Expense.objects.filter(name_process = children_process)
         return render(request,'process/expenses.html', context={'expense':expense,"children": children_expense})
 
 #вкладка "Показатели"
@@ -705,7 +706,7 @@ def export_xls(request):
 
     wb = xlwt.Workbook(encoding='utf-8')
     description_sheet = wb.add_sheet("Текстовое описание")
-    process_sheet = wb.add_sheet('Process')
+    process_sheet = wb.add_sheet('Сравнение процессов')
 
     # Sheet header, first row
     row_num = 0
