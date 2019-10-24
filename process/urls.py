@@ -45,7 +45,6 @@ urlpatterns = [
     path('sumallexpense/',views.calculate_all_for_process, name="sum_all_expense"),
     path('choise_process',views.choise_process, name = "choise_process"),
     path('create_coppy',views.coppy_process, name = "create_coppy"),
-    path('choise_expense/',views.choise_expense, name = "choise_expense"),
     path('riskevent/<id>',views.risk_event, name = "risk_event"),
     path('change_expense/<id>',views.change_expense, name = "change_expense"),
     path('export_xls', views.export_xls, name='export_xls'),

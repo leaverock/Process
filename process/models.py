@@ -43,6 +43,7 @@ class Group_process(models.Model):
         verbose_name_plural ="Группы"
 
 class Process(MPTTModel):
+
     base = models.ForeignKey('self', on_delete=models.SET_NULL, blank = True, null = True)
     parent = TreeForeignKey('self', on_delete = models.CASCADE, null = True, blank = True, verbose_name="Подпроцесс",related_name='children')
     name = models.CharField(max_length=200,verbose_name="Название процесса")
@@ -203,7 +204,7 @@ class EventModels(models.Model):
         ('и' ,'регулярное'),
     )
     
-    expense = models.ForeignKey(Expense, on_delete = models.CASCADE,verbose_name = "Затрата")
+    process = models.ForeignKey(Process, on_delete = models.CASCADE,verbose_name = "Затрата", blank = True)
     owner = models.CharField(max_length = 150,verbose_name = "Владелец")
     number = models.IntegerField(verbose_name = "Номер")
     name_event = models.CharField(max_length=  200,verbose_name = "Название мероприятия")

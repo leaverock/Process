@@ -3,7 +3,7 @@
 {% block  Contet%}
     <table>
         <tr class = "first-row">
-            <td>Наиминование риска</td>
+            <td>Наиминование процесса</td>
             <td>Владелец риска</td>
             <td>№</td>
             <td>Наиминование мероприятия</td>
@@ -15,7 +15,7 @@
         </tr>
         {% for ev in event %}
         <tr class = "rowtable">
-            <td>{{ev.name_risk}}</td>
+            <td>{{ev.process}}</td>
             <td>{{ev.owner}}</td>
             <td>{{ev.number}}</td>
             <td>{{ev.name_event}}</td>

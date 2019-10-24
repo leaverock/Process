@@ -21,7 +21,9 @@ import math
 from io import BytesIO
 import base64
 from scipy.stats import norm
-import xlwt
+from datetime import datetime
+from datetime import timedelta
+import xlsxwriter
 
 
 #endregion
@@ -113,13 +115,10 @@ class RiskView(View):
 @method_decorator(login_required(login_url='/process/accounts/login/'), name = 'dispatch')
 class AllRiskView(View):
     def get (self,request):
-        Type = request.session['Type']
+        
         PrID = request.session['PrId']
-        if Type == 'g':
-            rsk = Risk.objects.filter(expense__name_process__group = PrID)
-        elif Type == 'p':
-            process = Process.objects.get(id = PrID).get_descendants(include_self=True)
-            rsk = Risk.objects.filter(expense__name_process__in = [proc.id for proc in process])
+        process = Process.objects.get(id = PrID).get_descendants(include_self=True)
+        rsk = Risk.objects.filter(expense__name_process__in = [proc.id for proc in process])
         return render(request, 'process/allrisk.html', context={'risk': rsk})
 
 #Сценарии рисков
@@ -144,11 +143,12 @@ class GraphicView(View):
         muc =float(expense1.expected_value_time)
         sigmac = float(expense1.standard_deviation_time)
         x_axis = np.arange(mu - 5*sigma, mu + 5*sigma, 0.001)
-        plt.plot(x_axis, norm.pdf(x_axis,mu,sigma), color = 'k')
-        plt.plot(x_axis, norm.pdf(x_axis,muc,sigmac), color = 'g')
+        plt.plot(x_axis, norm.pdf(x_axis,mu,sigma), color = 'k', label = "Исходный процесс")
+        plt.plot(x_axis, norm.pdf(x_axis,muc,sigmac), color = 'g', label = "Изменненный процесс")
         plt.axvline(x=mu,linewidth=2, color='k', linestyle = ":")
         plt.axvline(x=muc,linewidth=2, color='g', linestyle = ":")
-        plt.axvline(x=expense.critical_time,linewidth=2, color='r')
+        plt.axvline(x=expense.critical_time,linewidth=2, color='r', label = "Критическое значение")
+        plt.legend()
         plt.ylabel('Вероятность')
         plt.xlabel('Показатель')
         plt.title("Время")
@@ -167,11 +167,11 @@ class GraphicView(View):
         x_axis = np.arange(mu1 - 5*sigma1, mu1 + 5*sigma1, 0.001)
         mu1c =float(expense1.expected_value_cost)
         sigma1c = float(expense1.standard_deviation_cost)
-        plt.plot(x_axis, norm.pdf(x_axis,mu1,sigma1), color = 'k')
-        plt.plot(x_axis, norm.pdf(x_axis,mu1c,sigma1c), color = 'g')
+        plt.plot(x_axis, norm.pdf(x_axis,mu1,sigma1), color = 'k', label = "Исходный процесс")
+        plt.plot(x_axis, norm.pdf(x_axis,mu1c,sigma1c), color = 'g', label = "Изменненный процесс")
         plt.axvline(x=mu1,linewidth=2, color='k' , linestyle = ":")
         plt.axvline(x=mu1c,linewidth=2, color='g' , linestyle = ":")
-        plt.axvline(x=expense.critical_cost,linewidth=2, color='r')
+        plt.axvline(x=expense.critical_cost,linewidth=2, color='r', label = "Критическое значение")
         plt.ylabel('Вероятность')
         plt.xlabel('Показатель')
         plt.title("Стоимость")
@@ -387,24 +387,19 @@ def coppy(id, parent = None):
 #создание копии процесса
 def coppy_process(request):
     coppy(request.GET.get('process'))
-    return redirect("choise_expense"+'/?process='+str(request.GET.get("process")))
+    return redirect("addevent"+'/?process='+str(request.GET.get("process")))
 
-#Выбор затраты для меропрития
-def choise_expense(request):
-    process = Process.objects.filter(base = request.GET.get('process')).latest("id").get_descendants(include_self=True)
-    expense = Expense.objects.filter(name_process__in = [proc.id for proc in process])
-    return render(request,'create/event/choise_expense.html', context={'expense':expense})
 
 #Создание Мероприятия
 def add_event(request):
-    expense = request.GET.get("expense")
+    process = request.GET.get("process")
     if request.method == "POST":
         form = AddEvent(request.POST)
         if form.is_valid():
             event = form.save(commit=False)
-            event.expense = Expense.objects.get(id  = expense) 
+            event.process = Process.objects.get(id  = process) 
             event.save()  
-            return redirect("change_expense", expense)
+            return redirect("info")
                  
     else:
         form = AddEvent()
@@ -576,12 +571,9 @@ def edit_expense(request):
     if request.method == "POST":
         form = AddExpense(request.POST, instance=expence)
         if form.is_valid():
-            expence = form.save()
+            expence = form.save(commit=False)
             expence.save()
-            if 'save' in request.POST:
-                return redirect('addindicator')
-            elif 'save-other' in request.POST:
-                return redirect('addexpence')
+            return redirect('info')
     else:
         form = AddExpense(instance=expence)
     return render(request, "edit/editexpence.html",{'form':form})
@@ -700,32 +692,85 @@ def delete(request):
             context['process'] = processes
         return render(request, 'process/infotable.html', context)
 
+import io
+from django.templatetags.static import static
+from urllib.request import urlopen
 def export_xls(request):
-    response = HttpResponse(content_type='application/ms-excel')
-    response['Content-Disposition'] = 'attachment; filename="process.xls"'
+    output = io.BytesIO()
+    prefix = 'https://' if request.is_secure() else 'http://'
+    image_url = prefix + request.get_host() + static('image/logo.png')
+    image_data = BytesIO(urlopen(image_url).read())
+    process = Process.objects.get(id = request.session['PrId']).get_descendants(include_self=True)
+    workbook = xlsxwriter.Workbook(output)
+    worksheet = workbook.add_worksheet('Тиульный лист')
+    worksheet.insert_image('K5',image_url,{'image_data': image_data})
 
-    wb = xlwt.Workbook(encoding='utf-8')
-    description_sheet = wb.add_sheet("Текстовое описание")
-    process_sheet = wb.add_sheet('Сравнение процессов')
+    worksheet = workbook.add_worksheet('Текстовое описнаие процесса')
 
-    # Sheet header, first row
+    columns = ['№','Название процесса','Условия начала выполнения процесса','Описание процесса' ]
     row_num = 0
 
-    font_style = xlwt.XFStyle()
-    font_style.font.bold = True
+    # Вывод заголовков
+    for col_num, column_title in enumerate(columns):
+        worksheet.write(row_num, col_num, column_title)
+        
+    for proc in process:
+        row_num += 1
+        
+        # Define the data for each cell in the row 
+        row = [
+            proc.pk,
+            proc.name,
+            proc.start_event,
+            proc.description,
+            
+        ]
+        for col_num, cell_value in enumerate(row):
+            worksheet.write(row_num, col_num, cell_value)
 
+    worksheet = workbook.add_worksheet('Подробная информация')
+
+    columns = ['№','Название процесса','Владелец','Вход','Выход','Ресурсы','Регламентирующие документы']
+    row_num = 0
+
+    # Вывод заголовков
+    for col_num, column_title in enumerate(columns):
+        worksheet.write(row_num, col_num, column_title)
+        
+    for proc in process:
+        row_num += 1
+        
+        # Define the data for each cell in the row 
+        row = [
+            proc.pk,
+            proc.name,
+            proc.owner,
+            str(proc.inpt),
+            str(proc.outpt),
+            proc.resurce,
+            proc.regulations,
+                       
+        ]
+        for col_num, cell_value in enumerate(row):
+            worksheet.write(row_num, col_num, cell_value)
+
+    worksheet = workbook.add_worksheet('Сравнение процессов')
+    
+
+    # Строка с загаловками
     columns = ['','Исходный процесс','Измененный процесс' ]
+    row_num = 0
 
-    for col_num in range(len(columns)):
-        process_sheet.write(row_num, col_num, columns[col_num], font_style)
-
-    # Sheet body, remaining rows
-    font_style = xlwt.XFStyle()
+    # Вывод заголовков
+    for col_num, column_title in enumerate(columns):
+        worksheet.write(row_num, col_num, column_title)
+        
 
     process = Process.objects.get(id = request.session['PrId'])
     change_process = Process.objects.get(base = process.id)
     expense = Expense.objects.get(name_process = process.id)
     expense_change = Expense.objects.get(name_process = change_process.id)
+    
     rows = [['Стоимость процесса без учета рисков, тыс. руб.', expense.execution_costs,expense_change.execution_costs],
             ['Стоимость процесса с учетом рисков, тыс. руб.', expense.expected_value_cost,expense_change.expected_value_cost],
             ['Вероятность реализации стоимости', expense.probability_cost,expense_change.probability_cost],
@@ -733,12 +778,85 @@ def export_xls(request):
             ['Время выполнения процесса с учетом рисков, дн.', expense.expected_value_time,expense_change.expected_value_time],
             ['Вероятность реализации времения', expense.probability_time,expense_change.probability_time],
             ]
-
     for row in rows:
         row_num += 1
-        for col_num in range(len(row)):
-            process_sheet.write(row_num, col_num, row[col_num], font_style)
+        for col_num, cell_value in enumerate(row):
+            worksheet.write(row_num, col_num, cell_value)
 
-    wb.save(response)
+    expense = Expense.objects.get(name_process = request.session['PrId'])
+    expense1 = Expense.objects.get(name_process__base = request.session['PrId'])
+    mu =float(expense.expected_value_time)
+    sigma = float(expense.standard_deviation_time)
+    muc =float(expense1.expected_value_time)
+    sigmac = float(expense1.standard_deviation_time)
+    x_axis = np.arange(mu - 5*sigma, mu + 5*sigma, 1)
+    y_axis = norm.pdf(x_axis,mu,sigma)
+    y_axisc = norm.pdf(x_axis,muc,sigmac)
+    worksheet.write_column('R1', x_axis)
+    worksheet.write_column('S1', y_axis)
+    worksheet.write_column('T1', y_axisc)
+    chart = workbook.add_chart({'type': 'line'})
+    chart.add_series({'values': "='Сравнение процессов'!$S$1:$S${}".format(len(x_axis))})
+    chart.add_series({'values': "='Сравнение процессов'!$T$1:$T${}".format(len(x_axis))})
+    worksheet.insert_chart('H4', chart)
+    mu1 =float(expense.expected_value_cost)
+    sigma1 = float(expense.standard_deviation_cost)
+    x_axis = np.arange(mu1 - 5*sigma1, mu1 + 5*sigma1, 0.001)
+    mu1c =float(expense1.expected_value_cost)
+    sigma1c = float(expense1.standard_deviation_cost)
+    x_axis = np.arange(mu1 - 5*sigma1, mu1+ 5*sigma1, 1)
+    y_axis = norm.pdf(x_axis,mu1,sigma1)
+    y_axisc = norm.pdf(x_axis,mu1c,sigma1c)
+    worksheet.write_column('U1', x_axis)
+    worksheet.write_column('V1', y_axis)
+    worksheet.write_column('W1', y_axisc)
+    chart = workbook.add_chart({'type': 'line'})
+    chart.add_series({'values': "='Сравнение процессов'!$V$1:$V${}".format(len(x_axis))})
+    chart.add_series({'values': "='Сравнение процессов'!$W$1:$W${}".format(len(x_axis))})
+    worksheet.insert_chart('H22', chart)
+
+    worksheet = workbook.add_worksheet('Затраты и риски')
+
+    columns = ['№','Название риска','Вероятность реализации','Математическое ожидание для времни ','Математическое ожидание для цены',"Среднеквадратическое отклонение времени","Среднеквадратическое отклонение стоимости"]
+    row_num = 0
+
+    # Вывод заголовков
+    for col_num, column_title in enumerate(columns):
+        worksheet.write(row_num, col_num, column_title)
+    process = Process.objects.get(id = request.session['PrId']).get_descendants(include_self=True)
+    rsk = Risk.objects.filter(expense__name_process__in = [proc.id for proc in process])
+    
+
+    for proc in rsk:
+        row_num += 1
+        
+        # Define the data for each cell in the row 
+        row = [
+            proc.pk,
+            proc.name_risk,
+            proc.probability,
+            proc.expected_value_time,
+            proc.expected_value_cost,
+            proc.standard_deviation_time,
+            proc.standard_deviation_cost,
+            
+                       
+        ]
+        for col_num, cell_value in enumerate(row):
+            worksheet.write(row_num, col_num, cell_value)
+
+    workbook.close()
+    
+    output.seek(0)
+
+    response = HttpResponse(
+        output,
+        content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    )
+    response['Content-Disposition'] = 'attachment; filename={date}-process.xlsx'.format(
+        date=datetime.now().strftime('%Y-%m-%d'),
+    )
+
     return response
+    
 #endregion
