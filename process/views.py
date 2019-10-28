@@ -142,7 +142,7 @@ class GraphicView(View):
         sigma = float(expense.standard_deviation_time)
         muc =float(expense1.expected_value_time)
         sigmac = float(expense1.standard_deviation_time)
-        x_axis = np.arange(mu - 5*sigma, mu + 5*sigma, 0.001)
+        x_axis = np.arange(mu - 5*sigma, mu + 5*sigma, 1)
         plt.plot(x_axis, norm.pdf(x_axis,mu,sigma), color = 'k', label = "Исходный процесс")
         plt.plot(x_axis, norm.pdf(x_axis,muc,sigmac), color = 'g', label = "Изменненный процесс")
         plt.axvline(x=mu,linewidth=2, color='k', linestyle = ":")
@@ -164,7 +164,7 @@ class GraphicView(View):
         plt.cla()
         mu1 =float(expense.expected_value_cost)
         sigma1 = float(expense.standard_deviation_cost)
-        x_axis = np.arange(mu1 - 5*sigma1, mu1 + 5*sigma1, 0.001)
+        x_axis = np.arange(mu1 - 5*sigma1, mu1 + 5*sigma1, 1)
         mu1c =float(expense1.expected_value_cost)
         sigma1c = float(expense1.standard_deviation_cost)
         plt.plot(x_axis, norm.pdf(x_axis,mu1,sigma1), color = 'k', label = "Исходный процесс")
@@ -473,10 +473,8 @@ def add_expense(request):
             expence = form.save(commit=False)
             expence.name_process = Process.objects.get(id=request.session['ProcessID']) 
             expence.save()
-            if 'save' in request.POST:
-                return redirect('addindicator')
-            elif 'save-other' in request.POST:
-                return redirect('addexpence')
+            return redirect('addindicator')
+            
     else:
         form = AddExpense()
     return render(request, "create/addexpence.html",{'form':form})
@@ -801,7 +799,7 @@ def export_xls(request):
     worksheet.insert_chart('H4', chart)
     mu1 =float(expense.expected_value_cost)
     sigma1 = float(expense.standard_deviation_cost)
-    x_axis = np.arange(mu1 - 5*sigma1, mu1 + 5*sigma1, 0.001)
+    x_axis = np.arange(mu1 - 5*sigma1, mu1 + 5*sigma1, 0.01)
     mu1c =float(expense1.expected_value_cost)
     sigma1c = float(expense1.standard_deviation_cost)
     x_axis = np.arange(mu1 - 5*sigma1, mu1+ 5*sigma1, 1)
@@ -825,7 +823,7 @@ def export_xls(request):
         worksheet.write(row_num, col_num, column_title)
     process = Process.objects.get(id = request.session['PrId']).get_descendants(include_self=True)
     rsk = Risk.objects.filter(expense__name_process__in = [proc.id for proc in process])
-    
+
 
     for proc in rsk:
         row_num += 1
