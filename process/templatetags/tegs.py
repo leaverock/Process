@@ -1,4 +1,3 @@
-from django.shortcuts import render_to_response, redirect
 from django import template
 from process.models import Process, Group_process
 

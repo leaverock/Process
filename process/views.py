@@ -824,7 +824,6 @@ def export_xls(request):
     process = Process.objects.get(id = request.session['PrId']).get_descendants(include_self=True)
     rsk = Risk.objects.filter(expense__name_process__in = [proc.id for proc in process])
 
-
     for proc in rsk:
         row_num += 1
         

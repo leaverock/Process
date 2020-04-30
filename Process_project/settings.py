@@ -28,7 +28,7 @@ SECRET_KEY = 'hn-xl4h@b9e2@o3-m=s((n5o*)^xq5)ahg0zmq^-)yl76!kn^b'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -82,9 +82,9 @@ WSGI_APPLICATION = 'Process_project.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'PS_DB',
+        'NAME': 'processes30-04-20',
         'USER' : 'postgres',
-        'PASSWORD' : '123456Qw',
+        'PASSWORD': '''`?Eq~3PtC?,'PhhZ''',
         'HOST' : '127.0.0.1',
         'PORT' : '5432',
     }
@@ -113,7 +113,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/
 
-LANGUAGE_CODE = 'ru-ru'
+LANGUAGE_CODE = 'ru'
 
 TIME_ZONE = 'UTC'
 
